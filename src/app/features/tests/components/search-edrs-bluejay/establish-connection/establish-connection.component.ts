@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnDestroy, OnInit, signal, ChangeDetectionStrategy} from '@angular/core';
+import {Component, Inject, Input, OnDestroy, OnInit, signal, computed, ChangeDetectionStrategy} from '@angular/core';
 import {SearchEdrsService} from "../../../services/search-edrs.service";
 import {DecedentSimpleInfo} from "../../../../../model/decedent-simple-info";
 import {ModuleHeaderConfig} from "../../../../../model/model-header-config";
@@ -25,6 +25,32 @@ export class EstablishConnectionComponent implements OnInit, OnDestroy {
 
   uiConstantsStep2: any;
   @Input('parentStepper') parentStepper: MatStepper;
+
+  protected readonly curlExample = computed(() => {
+    const creds = this.uiConstantsStep2?.oAuthCredentials;
+    if (!creds) return { display: '', value: '' };
+
+    // Build the data object conditionally
+    const dataObj: any = {
+      client_id: creds.clientId,
+      client_secret: creds.clientSecret
+    };
+
+    // Only add audience if it exists and is not empty
+    if (creds.audience) {
+      dataObj.audience = creds.audience;
+    }
+
+    dataObj.grant_type = creds.grantType;
+
+    const dataString = JSON.stringify(dataObj);
+
+    const display = `curl \t--request POST\n\t--url ${creds.accessTokenUrl}\n\t--header 'content-type: application/json'\n\t--data '${dataString}'`;
+
+    const value = `curl --request POST   --url ${creds.accessTokenUrl}   --header 'content-type: application/json'   --data '${dataString}'`;
+
+    return { display, value };
+  });
 
   constructor(
     @Inject('workflowSimulatorConfig') public moduleConfig: ModuleHeaderConfig,

@@ -1,14 +1,14 @@
 {
   "dashboardApiUrl": "",
-  "ravenImportApiUrl": "",
-  "fhirValidatorUrl": "",
+  "ravenImportApiUrl": "http://localhost:9999/raven-import-and-submit-api",
+  "fhirValidatorUrl": "http://localhost:9888/fhir",
   "ravenFhirServer": {
-    "baseUrl": "",
-    "basicAuth": ""
+    "baseUrl": "http://localhost:9080/raven-fhir-server/fhir",
+    "basicAuth": "client:secret"
   },
   "blueJayServer": {
-    "baseUrl": "",
-    "basicAuth": ""
+    "baseUrl": "http://localhost:9090/bluejay-fhir-server/fhir",
+    "basicAuth": "client:secret"
   },
   "auth": {
     "redirectUrl": "",
@@ -19,5 +19,14 @@
       "audience": ""
     }
   },
-  "enableDashboardApiServices": ""
+  "enableDashboardApiServices": false,
+  "workflowSimulator": {
+    "searchEdrsOAuthCredentials": {
+      "grantType": "client_credentials",
+      "accessTokenUrl": "http://localhost:8080/realms/Raven-MDI/protocol/openid-connect/token",
+      "clientId": "raven-dashboard-user",
+      "clientSecret": "examplepassword",
+      "contentType": "application/x-www-form-urlencoded"
+    }
+  }
 }

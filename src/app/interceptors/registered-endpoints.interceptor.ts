@@ -40,8 +40,9 @@ export class RegisteredEndpointsInterceptor implements HttpInterceptor {
           "baseUrl": this.normalizeUrl(config?.fhirValidatorUrl),
           "allowedEndpoints": [
             "$validate",
-            "$translate",
-            "$packages"
+            "$convert",
+            "$packages",
+            "health"
           ]
         },
         {

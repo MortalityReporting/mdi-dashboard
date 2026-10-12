@@ -18,9 +18,6 @@
         @case ('search-edrs') {
           <app-search-edrs (onTestCompletedEvent)="onUpdateStatus($event)"/>
         }
-        @case ('update-edrs') {
-          <app-update-edrs (onTestCompletedEvent)="onUpdateStatus($event)"/>
-        }
         @case ('validation') {
           <app-validation (onTestCompletedEvent)="onUpdateStatus($event)"/>
         }

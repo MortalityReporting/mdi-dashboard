@@ -11,31 +11,7 @@
 }
 
 
-<!-- The section below renders error messages returned by the validator.-->
-@if (serverErrorDetected) {
-  <div class=server-error-message-container>
-    <button mat-button class="close-button" color="accent" aria-label="Close" disableRipple
-      (click)="onCloseServerErrorMessage()">
-      <mat-icon>close</mat-icon>
-    </button>
-    <div class="server-error-status"><h2>Server Error Response Status: {{ serverErrorStatus }}</h2></div>
-    @for (serverError of serverErrorList; track serverError) {
-      <div class="server-error-message-text"
-      [innerText]="serverError.diagnostics"></div>
-    }
-  </div>
-}
-
-<!-- TODO remove this code when the API code is updated to return 408 on request timeout -->
-@if (serverTimoutDetected) {
-  <div class=server-error-message-container>
-    <button mat-button class="close-button" color="accent" aria-label="Close" disableRipple
-      (click)="serverTimoutDetected = false">
-      <mat-icon>close</mat-icon>
-    </button>
-    <div class="server-error-status"><h2>Server Timeout Error.</h2></div>
-  </div>
-}
+<app-warning-message></app-warning-message>
 
 <!--Actions available above the FHIR validator input textarea-->
 <div class="row-button-wrapper">
@@ -60,9 +36,10 @@
 
   @if(igList()?.length > 1){
     <form [formGroup]="igSelectionFg">
-    <mat-form-field appearance="outline" class="margin-left-md margin-top-md margin-right-md">
+    <mat-form-field appearance="outline" class="margin-left-md margin-top-md margin-right-md ig-name-field">
       <mat-label>Select IG Name</mat-label>
       <mat-select formControlName="selectedIgName">
+
         @for (igName of igNameList; track igName) {
           <mat-option [value]="igName">
             {{ igName }}
@@ -96,7 +73,7 @@
 
   <!--File upload widget-->
   <input type="file" class="file-input" (click)="fileUpload.value=null"
-    [accept]="$safeNavigationMigration(validationInputFormat()?.accepts?.toString())"
+    [accept]="validationInputFormat()?.accepts?.toString()"
     (change)="onFileSelected($event)" #fileUpload
     aria-label="Select FHIR resource file to upload">
 
@@ -371,14 +348,16 @@
           <ng-container matColumnDef="location">
             <th mat-header-cell *matHeaderCellDef id="location-column-header"> Location</th>
             <td mat-cell *matCellDef="let validationResultItem" (click)="onLocationSelected(validationResultItem)">
-              <span class="location-data"> {{validationResultItem.location}}</span>
+              <span class="location-data"> {{validationResultItem.locationDisplay}}</span>
             </td>
+
+
           </ng-container>
           <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
           <ng-container matColumnDef="expandedDetail">
             <td mat-cell *matCellDef="let validationResultItem" [attr.colspan]="displayedColumns?.length">
               <div class="validation-result-detail"
-                [@detailExpand]="validationResultItem.expanded ? 'expanded' : 'collapsed'">
+                [class.expanded]="validationResultItem.expanded">
                 <div class="validation-result-text-value">
                   {{validationResultItem.diagnostics}}
                 </div>
@@ -388,9 +367,9 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let validationResultItem; columns: displayedColumns;"
             class="table-row"
-            [class.expanded-row]="validationResultItem.expanded">
-            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="text-value-row"></tr>
-          </table>
+            [class.expanded-row]="validationResultItem.expanded"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="text-value-row"></tr>
+        </table>
         }
       </div>
       <!-- Resource as returned from the validator. Note that the resource returned from the validator may be
@@ -398,12 +377,12 @@
       @if (localResultDetailsExpanded && apiResponse()?.formattedResource) {
         <div class="padding-top-md">
           <div class="line-numbers-response" #numbers>
-            @for (item of apiResponse()?.formattedResource?.split('\n'); track item; let i = $index) {
+            @for (item of apiResponse()?.formattedResource?.split('\n'); track i; let i = $index) {
               <div class="numbers-response">{{i + 1}}</div>
             }
           </div>
           <div class="validator-response">
-            @for (item of apiResponse()?.formattedResource?.split('\n'); track item; let i = $index) {
+            @for (item of apiResponse()?.formattedResource?.split('\n'); track i; let i = $index) {
               <span>
                 <pre [ngClass]="getLineItemClass(item, i)" class="line-item" [id]="'mark'+ (i+1)">{{item}}</pre>
               </span>

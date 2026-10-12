@@ -15,7 +15,6 @@ import {
 } from "../../multi-file-upload/components/multi-file-upload/multi-file-upload.component";
 import { OnboardingComponent } from '../../../tests/components/onboarding/onboarding.component';
 import { SearchEdrsComponent } from '../../../tests/components/search-edrs/search-edrs.component';
-import { UpdateEdrsComponent } from '../../../tests/components/update-edrs/update-edrs.component';
 import { ValidationComponent } from '../../../tests/components/validation/validation.component';
 import { WorkflowIgDevelopmentComponent } from '../../../tests/components/workflow-ig-development/workflow-ig-development.component';
 import { GenericFileSubmissionComponent } from '../../../tests/components/generic-file-submission/generic-file-submission.component';
@@ -28,7 +27,16 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
     templateUrl: './test-container.component.html',
     styleUrls: ['../testing-event.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [OnboardingComponent, SearchEdrsComponent, UpdateEdrsComponent, ValidationComponent, WorkflowIgDevelopmentComponent, GenericFileSubmissionComponent, MatButton, MatIcon, MatProgressSpinner]
+    imports: [
+      OnboardingComponent,
+      SearchEdrsComponent,
+      ValidationComponent,
+      WorkflowIgDevelopmentComponent,
+      GenericFileSubmissionComponent,
+      MatButton,
+      MatIcon,
+      MatProgressSpinner
+    ]
 })
 export class TestContainerComponent {
 
@@ -111,8 +119,6 @@ export class TestContainerComponent {
   }
 
   onUpdateStatus(status: any, attachment?: string) {
-    console.log(status)
-    console.log(attachment)
     let data: UpdateAction = {status: status}
     if (attachment) {
       data.attachment = attachment

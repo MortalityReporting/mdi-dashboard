@@ -15,6 +15,19 @@ export interface AuthConfig {
   auth0: Auth0Config;
 }
 
+export interface SearchEdrsOAuthCredentials {
+  grantType: string;
+  accessTokenUrl: string;
+  clientId: string;
+  clientSecret: string;
+  audience?: string;
+  contentType?: 'application/json' | 'application/x-www-form-urlencoded';
+}
+
+export interface WorkflowSimulatorConfig {
+  searchEdrsOAuthCredentials: SearchEdrsOAuthCredentials;
+}
+
 export class Config {
   constructor() {}
 
@@ -32,4 +45,5 @@ export class Config {
     basicAuth: ""
   };
   auth?: AuthConfig;
+  workflowSimulator?: WorkflowSimulatorConfig;
 }

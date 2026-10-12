@@ -3,31 +3,34 @@
 </div>
 <p>You may select a local JSON file or paste the JSON directly into the provided area below.</p>
 <p><b> Warning:</b> To prevent the creation of duplicate records, existing records are overwritten.</p>
-<div class="content-offset">
-  <app-fhir-validator-lib
-    [formatResourceBtnShown]="false"
-    [resultDetailsExpandBtnShown]="false"
-    [validationResultsExpanded]="true"
-    [submitBtnShown]="false"
-    [cancelValidationBtnShown]="false"
-    [clearValidatorBtnShown]="false"
-    [buttonTxtColor] = "'white'"
-    [buttonBackgroundColor] = "config.backgroundColor"
-    (onValidation)="onValidation($event)"
-    (onApiError)="onValidationError($event)"
-    (onResourceContentChanged)="onResourceContentChanged($event)"
-    [exportValidationResultsBtnName]="'Export Validation Results (.zip)'"
-    (onExportValidationResults)="onExportValidationResults($event)"
-    [ig]="ig"
-  />
-
-</div>
+@if (showValidatorLoading()) {
+  <app-validator-loading-message></app-validator-loading-message>
+} @else if (validatorReady()) {
+  <div class="content-offset">
+    <app-fhir-validator-lib
+      [formatResourceBtnShown]="false"
+      [resultDetailsExpandBtnShown]="false"
+      [validationResultsExpanded]="true"
+      [submitBtnShown]="false"
+      [cancelValidationBtnShown]="false"
+      [clearValidatorBtnShown]="false"
+      [buttonTxtColor] = "'white'"
+      [buttonBackgroundColor] = "config.backgroundColor"
+      (onValidation)="onValidation($event)"
+      (onApiError)="onValidationError($event)"
+      (onResourceContentChanged)="onResourceContentChanged($event)"
+      [exportValidationResultsBtnName]="'Export Validation Results (.zip)'"
+      (onExportValidationResults)="onExportValidationResults($event)"
+      [ig]="ig"
+    />
+  </div>
+}
 
 <div class="padding-top-md">
   <h3>2. Validate Record</h3>
   <div class="content-offset">
     <button mat-raised-button [style.background-color]="config.backgroundColor" [style.color]="'white'"
-            (click)="onValidate()">
+            (click)="onValidate()" [disabled]="!validatorReady()">
       Validate Record
     </button>
   </div>

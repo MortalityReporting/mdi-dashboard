@@ -1,5 +1,3 @@
-import * as Diff from 'diff';
-import {DiffType} from './diff-type';
 import {LocationDiff} from './location.diff';
 
 export class LocationInjuryDiff extends LocationDiff {
@@ -8,7 +6,7 @@ export class LocationInjuryDiff extends LocationDiff {
     {
         super( actual, expected );
 
-        this.style = 'invalid';
+        this.style = null;
 
         this.doDiff();
     }

@@ -1,5 +1,6 @@
 import * as Diff from 'diff';
 import {DiffType} from './diff-type';
+import {markFieldInvalid} from './base-diff.helper';
 
 export class LocationDiff {
     address: DiffType;
@@ -19,17 +20,40 @@ export class LocationDiff {
         this.actual = actual;
         this.expected = expected;
 
-        this.style = 'invalid';
+        this.style = null;
         this.address = new DiffType();
         this.id = new DiffType();
         this.meta = new DiffType();
         this.name = new DiffType();
         this.resourceType = new DiffType();
         this.type = new DiffType();
+
+        // Don't call doDiff() here - let child classes call it after they initialize their properties
+    }
+
+    /**
+     * Helper method to mark all DiffType properties as invalid when a resource is missing
+     */
+    protected markAllFieldsInvalid(): void {
+        this.style = 'invalid';
+
+        // Iterate through all properties and mark DiffType instances as invalid
+        Object.keys(this).forEach(key => {
+            const value = (this as any)[key];
+            if (value instanceof DiffType) {
+                markFieldInvalid(this, value, key);
+            }
+        });
     }
 
     doDiff()
     {
+        // Check if one resource exists but the other doesn't
+        if ((this.actual && !this.expected) || (!this.actual && this.expected)) {
+            this.markAllFieldsInvalid();
+            return;
+        }
+
         try {
             this.address.expected = JSON.stringify( this.expected.address, null, 4 );
             this.address.actual = JSON.stringify( this.actual.address, null, 4 );

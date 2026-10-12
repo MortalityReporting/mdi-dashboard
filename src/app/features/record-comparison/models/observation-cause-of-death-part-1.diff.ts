@@ -29,6 +29,11 @@ export class ObservationCauseOfDeathPart1Diff extends ObservationDiff {
     {
         super.doDiff();
 
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
+
         try {
             let expectedComponent = this.fhirHelper.findObservationComponentByCode(this.expected, "69440-6");
             this.valueString.expected = JSON.stringify( expectedComponent?.valueString, null, 4 );

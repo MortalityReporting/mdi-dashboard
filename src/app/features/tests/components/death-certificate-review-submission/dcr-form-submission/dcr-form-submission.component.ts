@@ -103,7 +103,7 @@ export class DcrFormSubmissionComponent {
       fax: new FormControl(''),
     }),
     deathInvestigation: new FormGroup({
-      dateOfDeath: new FormControl('', Validators.required),
+      dateOfDeath: new FormControl('', [Validators.required, this.yearValidator]),
       timeOfDeath: new FormControl(''),
       placeOfDeath: this.placeOfDeath,
       address: this.optionalAddress,
@@ -115,7 +115,7 @@ export class DcrFormSubmissionComponent {
       middleName: new FormControl(''),
       race: this.race,
       ethnicity: new FormControl(''),
-      decedentDateOfBirth: new FormControl('', Validators.required),
+      decedentDateOfBirth: new FormControl('', [Validators.required, this.yearValidator]),
     })
   });
 
@@ -213,6 +213,29 @@ export class DcrFormSubmissionComponent {
       return null;
     }
     return {placeOfDeathDescriptionRequired: true}; //Return error object if invalid
+  }
+
+  private yearValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) {
+      return null; // Let required validator handle empty values
+    }
+
+    let year: number;
+    if (value instanceof Date) {
+      year = value.getFullYear();
+    } else if (typeof value === 'string') {
+      const date = new Date(value);
+      year = date.getFullYear();
+    } else {
+      return null;
+    }
+
+    if (year < 1000 || year > 9999) {
+      return { invalidYear: true };
+    }
+
+    return null;
   }
 
   private constructValidatorsAndValidate() {

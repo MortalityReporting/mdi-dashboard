@@ -1,7 +1,7 @@
-import {Component, Inject, ViewChild, ChangeDetectionStrategy} from '@angular/core';
+import {Component, computed, DestroyRef, Inject, OnInit, ViewChild, ChangeDetectionStrategy, signal} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ImportCaseService} from "../../services/import-case.service";
 import {UtilsService} from "../../../../service/utils.service";
-import {FhirValidatorWrapperComponent} from "../../../fhir-validator-wrapper/components/fhir-validator-wrapper/fhir-validator-wrapper.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ModuleHeaderConfig} from "../../../../providers/module-header-config";
 import {FhirValidatorResultsExportService} from "../../../../service/fhir-validator-results-export.service";
@@ -9,9 +9,12 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatIconModule} from "@angular/material/icon";
 import {FhirValidatorComponent} from "../../../fhir-validator-wrapper/components/fhir-validator/fhir-validator.component";
-import {ImplementationGuide} from "../../../fhir-validator-wrapper/modal/implementation-guide";
-import {ValidationResults} from "../../../fhir-validator-wrapper/modal/validation-results";
+import {ImplementationGuide} from "../../../fhir-validator-wrapper/models/implementation-guide";
+import {ValidationResults} from "../../../fhir-validator-wrapper/models/validation-results";
 import {openConfirmationDialog} from "../../../../components/widgets/confirmation-dialog/conformation-dialog.component";
+import {FhirValidatorReadinessService} from "../../../fhir-validator-wrapper/services/fhir-validator-readiness.service";
+import {ValidatorLoadingMessageComponent} from "../../../fhir-validator-wrapper/components/validator-loading-message/validator-loading-message.component";
+import {SharedHttpErrorService} from "../../../../service/shared-http-error.service";
 
 
 @Component({
@@ -21,15 +24,20 @@ import {openConfirmationDialog} from "../../../../components/widgets/confirmatio
   changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     FhirValidatorComponent,
+    ValidatorLoadingMessageComponent,
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule
   ]
 })
-export class ImportCaseFhirRecordComponent {
+export class ImportCaseFhirRecordComponent implements OnInit {
 
-  @ViewChild(FhirValidatorWrapperComponent) validator: FhirValidatorWrapperComponent;
   @ViewChild(FhirValidatorComponent) fhirValidator
+
+  readonly validatorReady = signal(false);
+  readonly showValidatorLoading = computed(() =>
+    !this.validatorReady() && !this.sharedHttpErrorService.errorDetected()
+  );
 
   isLoading: boolean = false;
   fhirResource: any;
@@ -47,7 +55,34 @@ export class ImportCaseFhirRecordComponent {
     private importCaseService: ImportCaseService,
     private utilsService: UtilsService,
     private dialog: MatDialog,
-    private fhirValidatorResultsExportService: FhirValidatorResultsExportService) {
+    private fhirValidatorResultsExportService: FhirValidatorResultsExportService,
+    private fhirValidatorReadinessService: FhirValidatorReadinessService,
+    private sharedHttpErrorService: SharedHttpErrorService,
+    private destroyRef: DestroyRef) {
+  }
+
+  ngOnInit(): void {
+    this.fhirValidatorReadinessService.getValidatorLoaded()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: response => {
+          if (response.status === 'ready') {
+            this.validatorReady.set(true)
+          }
+          else {
+            this.sharedHttpErrorService.setErrorMessage(
+              `FHIR Validator returned unknown status of ${response.status}`
+            );
+          }
+        },
+        error: error => {
+          this.sharedHttpErrorService.setErrorMessage(
+            'FHIR validator encountered error while loading data.'
+          );
+          console.error('FHIR validator encountered error while loading data.', error);
+        }
+      });
   }
 
   importCase(){

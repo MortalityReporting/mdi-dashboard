@@ -36,6 +36,11 @@ export class ObservationDeathDateDiff extends ObservationDiff {
     {
         super.doDiff();
 
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
+
         try {
             let expectedComponent = this.fhirHelper.findObservationComponentByCode(this.expected, "80616-6");
             this.pronouncedDateTime.expected = expectedComponent.valueDateTime;

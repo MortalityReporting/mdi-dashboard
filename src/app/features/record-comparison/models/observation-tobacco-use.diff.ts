@@ -20,6 +20,11 @@ export class ObservationTobaccoUseDiff extends ObservationDiff {
     {
         super.doDiff();
 
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
+
         try {
             this.status.expected = JSON.stringify( this.expected.status, null, 4 );
             this.status.actual = JSON.stringify( this.actual.status, null, 4 );

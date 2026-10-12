@@ -1,5 +1,6 @@
 import * as Diff from 'diff';
 import {DiffType} from './diff-type';
+import {markAllFieldsInvalid} from './base-diff.helper';
 
 export class CompositionMdiToEdrsDiff {
     author: DiffType;
@@ -23,7 +24,7 @@ export class CompositionMdiToEdrsDiff {
     {
         this.actual = actual;
         this.expected = expected;
-        this.style = 'invalid';
+        this.style = null;
         this.author = new DiffType();
         this.date = new DiffType();
         this.extension = new DiffType();
@@ -41,6 +42,12 @@ export class CompositionMdiToEdrsDiff {
 
     doDiff()
     {
+        // Check if one resource exists but the other doesn't
+        if ((this.actual && !this.expected) || (!this.actual && this.expected)) {
+            markAllFieldsInvalid(this);
+            return;
+        }
+
         try {
             this.author.expected = JSON.stringify( this.expected.author, null, 4 );
             this.author.actual = JSON.stringify( this.actual.author, null, 4 );

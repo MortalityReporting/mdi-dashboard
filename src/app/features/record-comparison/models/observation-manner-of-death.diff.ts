@@ -1,6 +1,7 @@
 import * as Diff from 'diff';
 import {DiffType} from './diff-type';
 import {ObservationDiff} from './observation.diff';
+import {markFieldInvalid} from './base-diff.helper';
 
 export class ObservationMannerOfDeathDiff extends ObservationDiff {
     performer: DiffType;
@@ -21,6 +22,14 @@ export class ObservationMannerOfDeathDiff extends ObservationDiff {
     override doDiff()
     {
         super.doDiff();
+
+        // If parent detected missing resource, mark child fields as invalid too
+        if (this.style === 'invalid') {
+            markFieldInvalid(this, this.performer, 'performer');
+            markFieldInvalid(this, this.status, 'status');
+            markFieldInvalid(this, this.valueCodeableConcept, 'valueCodeableConcept');
+            return;
+        }
 
         try {
             this.performer.expected = JSON.stringify( this.expected.performer, null, 4 );

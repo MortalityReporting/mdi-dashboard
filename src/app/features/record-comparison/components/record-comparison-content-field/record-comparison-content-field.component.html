@@ -1,14 +1,22 @@
-<mat-expansion-panel class="summary-section" id="name" #matExpansionPanel="matExpansionPanel">
+<mat-expansion-panel class="summary-section" id="name" #matExpansionPanel="matExpansionPanel" [disabled]="!differenceHasContents()">
   <mat-expansion-panel-header>
 
     <mat-panel-title>
-      @if (state=='valid') {
-        <mat-icon class="valid-icon">done</mat-icon>
+      @if(differenceHasContents()){
+        @if (state() === 'valid') {
+          <mat-icon class="valid-icon">done</mat-icon>
+        }
+        @if (state() === 'invalid') {
+          <mat-icon class="invalid-icon">error</mat-icon>
+        }
       }
-      @if (state=='invalid') {
-        <mat-icon class="invalid-icon">error</mat-icon>
+      @else {
+        <mat-icon class="no-data-icon">do_not_disturb_on</mat-icon>
       }
-      {{title}}
+      {{title()}}
+      @if(!differenceHasContents()){
+        <span class="note margin-left-md"> No Data Found </span>
+      }
     </mat-panel-title>
 
   </mat-expansion-panel-header>
@@ -17,10 +25,10 @@
     <div class="summary-section-grid">
       <div class="grid-row">
         <div class="grid-col-1">
-          <div>Resource/Profile: {{resource}}</div>
+          <div>Resource/Profile: {{resource()}}</div>
         </div>
         <div class="grid-col-1">
-          <div>FHIR Path: {{fhirPath}}</div>
+          <div>FHIR Path: {{fhirPath()}}</div>
         </div>
       </div>
     </div>
@@ -28,30 +36,30 @@
 
       <div class="results">
         <div class="card">
-          <div [ngClass]="state" class="card-label">Your Data</div>
+          <div [ngClass]="state()" class="card-label">Your Data</div>
           <div class="card-container">
-            @if (differenceHasContents) {
-              <div [innerHTML]="differenceHasContents ? difference : ''">{{difference}}</div>
+            @if (differenceHasContents()) {
+              <div [innerHTML]="difference()"></div>
             }
-            @if (!differenceHasContents) {
+            @if (!differenceHasContents()) {
               <div><pre>No Data Found</pre></div>
             }
           </div>
         </div>
         <div class="card">
-          <div [ngClass]="state" class="card-label">Reference Data</div>
+          <div [ngClass]="state()" class="card-label">Reference Data</div>
           <div class="card-container">
-            @if (expected) {
-              <div><pre>{{expected}}</pre></div>
+            @if (expected()) {
+              <div><pre>{{expected()}}</pre></div>
             }
-            @if (!expected) {
+            @if (!expected()) {
               <div><pre>No Data Found</pre></div>
             }
           </div>
         </div>
       </div>
 
-      @if (state=='invalid') {
+      @if (state() === 'invalid') {
         <div class="grid-row" style="margin: 0.5rem">
           <span><strong>Legend: </strong></span>
           <span class="diff-removed-color" style="margin-left: 1rem; padding: 4px">Missing Data</span>

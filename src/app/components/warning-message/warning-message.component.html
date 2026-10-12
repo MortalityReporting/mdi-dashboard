@@ -1,0 +1,11 @@
+@if (isVisible()) {
+  <div class="warning-message">
+    <mat-icon>warning</mat-icon>
+    <div class="warning-text loading-ellipsis">
+      {{ warningMessage() }}
+    </div>
+    <button mat-icon-button (click)="close()" aria-label="Close warning message" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+}

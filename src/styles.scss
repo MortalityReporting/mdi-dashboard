@@ -549,3 +549,20 @@ TODO: Refactor to generalize class names and move to a common shared .css file.
   color: inherit;
   cursor: pointer;
 }
+
+/* Loading ellipsis animation */
+.loading-ellipsis::after {
+  display: inline-block;
+  animation: ellipsis 1.2s infinite steps(4, end);
+  content: "...";
+  width: 1.5em; /* Prevents text from shifting */
+  text-align: left;
+}
+
+@keyframes ellipsis {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+  100% { content: ""; }
+}

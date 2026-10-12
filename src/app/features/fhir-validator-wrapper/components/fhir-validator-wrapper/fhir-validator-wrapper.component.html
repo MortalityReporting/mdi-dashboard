@@ -3,15 +3,21 @@
   <div class="generic-component-content">
     <mat-card class="mat-elevation-z8">
       <mat-card-content>
-        <app-fhir-validator-lib
-          [validatorTitle]="'FHIR Validator'"
-          [validationInputFormat]="validationTextFormat"
-          [formatResourceBtnShown]="true"
-          [buttonTxtColor]="'white'"
-          [buttonBackgroundColor]="config.backgroundColor"
-          [exportValidationResultsBtnName]="'Export Results (.zip)'"
-          (onExportValidationResults)="onExportValidationResults($event)"
-        ></app-fhir-validator-lib>
+        @if(showLoadingMessage()){
+          <app-validator-loading-message></app-validator-loading-message>
+        }
+        @else if (!isDataLoading()) {
+          <app-fhir-validator-lib
+            [validatorTitle]="'FHIR Validator'"
+            [validationInputFormat]="validationTextFormat"
+            [formatResourceBtnShown]="true"
+            [buttonTxtColor]="'white'"
+            [buttonBackgroundColor]="config.backgroundColor"
+            [exportValidationResultsBtnName]="'Export Results (.zip)'"
+            (onExportValidationResults)="onExportValidationResults($event)"
+          ></app-fhir-validator-lib>
+        }
+
       </mat-card-content>
     </mat-card>
   </div>

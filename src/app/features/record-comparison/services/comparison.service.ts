@@ -13,9 +13,9 @@ import {USCorePatientDiff} from "../models/us-core-patient.diff";
 import {USCorePractitionerDiff} from "../models/us-core-practitioner.diff";
 import {ObservationAutopsyPerformedDiff} from "../models/observation-autopsy-performed.diff";
 import {ObservationHowDeathInjuryOccurredDiff} from "../models/observation-how-death-injury-occurred.diff";
-import {BundleHelperService} from "../../fhir-util/services/bundle-helper.service";
+import {BundleHelperService} from "../../fhir-util";
 import {Difference} from "../models/difference";
-import {FhirHelperService} from "../../fhir-util/services/fhir-helper.service";
+import {FhirHelperService} from "../../fhir-util";
 import {FHIRProfileConstants} from "../../../providers/fhir-profile-constants";
 
 @Injectable({
@@ -107,8 +107,10 @@ export class ComparisonService {
         this.bundleHelper.findResourceByProfileName( referenceDocument, this.fhirProfiles.USCore.USCorePatient ));
 
       difference.practitioner = new USCorePractitionerDiff(
-        this.bundleHelper.findResourceByProfileName( userDocument, this.fhirProfiles.USCore.USCorePractitioner ),
-        this.bundleHelper.findResourceByProfileName( referenceDocument, this.fhirProfiles.USCore.USCorePractitioner ));
+        this.bundleHelper.findResourceByProfileName(userDocument, this.fhirProfiles.USCore.USCorePractitioner) ||
+        this.bundleHelper.findResourceByProfileName(userDocument, this.fhirProfiles.VRCL.Practitioner_VR),
+        this.bundleHelper.findResourceByProfileName(referenceDocument, this.fhirProfiles.USCore.USCorePractitioner) ||
+        this.bundleHelper.findResourceByProfileName(referenceDocument, this.fhirProfiles.VRCL.Practitioner_VR));
 
       difference.autopsyPerformed = new ObservationAutopsyPerformedDiff(
         this.bundleHelper.findResourceByProfileName( userDocument, this.fhirProfiles.VRCL.Obs_AutopsyPerformed ),
@@ -119,56 +121,56 @@ export class ComparisonService {
         this.bundleHelper.findResourceByProfileName( referenceDocument, this.fhirProfiles.VRDR.Obs_InjuryIncident ));
 
       difference.caseAdminInfoStatus = (
-        difference.mdiToEdrs.extension.style === 'valid' &&
-        difference.practitioner.name.style === 'valid' &&
-        difference.practitioner.identifier.style === 'valid' &&
-        difference.practitioner.telecom.style === 'valid' &&
-        difference.practitioner.address.style === 'valid'
+        difference.mdiToEdrs?.extension?.style !== 'invalid' &&
+        difference.practitioner?.name?.style !== 'invalid' &&
+        difference.practitioner?.identifier?.style !== 'invalid' &&
+        difference.practitioner?.telecom?.style !== 'invalid' &&
+        difference.practitioner?.address?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
       difference.demographicsStatus = (
-        difference.patient.name.style === 'valid' &&
-        difference.patient.gender.style === 'valid' &&
-        difference.patient.identifier.style === 'valid' &&
-        difference.patient.birthDate.style === 'valid' &&
-        difference.patient.ethnicity.style === 'valid' &&
-        difference.patient.race.style === 'valid' &&
-        difference.patient.address.style === 'valid'
+        difference.patient?.name?.style !== 'invalid' &&
+        difference.patient?.gender?.style !== 'invalid' &&
+        difference.patient?.identifier?.style !== 'invalid' &&
+        difference.patient?.birthDate?.style !== 'invalid' &&
+        difference.patient?.ethnicity?.style !== 'invalid' &&
+        difference.patient?.race?.style !== 'invalid' &&
+        difference.patient?.address?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
       difference.circumstancesStatus = (
-        difference.locationDeath.name.style === 'valid' &&
-        difference.locationInjury.name.style === 'valid' &&
-        difference.tobaccoUse.valueCodeableConcept.style === 'valid' &&
-        difference.pregnancy.valueCodeableConcept.style === 'valid'
+        difference.locationDeath?.name?.style !== 'invalid' &&
+        difference.locationInjury?.name?.style !== 'invalid' &&
+        difference.tobaccoUse?.valueCodeableConcept?.style !== 'invalid' &&
+        difference.pregnancy?.valueCodeableConcept?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
       difference.jurisdictionStatus = (
-        difference.deathDate.pronouncedDateTime.style === 'valid' &&
-        difference.deathDate.valueDateTime.style === 'valid' &&
-        difference.deathDate.method.style === 'valid'
+        difference.deathDate?.pronouncedDateTime?.style !== 'invalid' &&
+        difference.deathDate?.valueDateTime?.style !== 'invalid' &&
+        difference.deathDate?.method?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
       difference.examAndAutopsyStatus = (
-        difference.autopsyPerformed.valueCodeableConcept.style === 'valid' &&
-        difference.autopsyPerformed.componentValueCodeableConcept.style === 'valid'
+        difference.autopsyPerformed?.valueCodeableConcept?.style !== 'invalid' &&
+        difference.autopsyPerformed?.componentValueCodeableConcept?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
       difference.causeAndMannerStatus = (
         difference.causeAndMannerStatus === 'valid' &&
-        difference.howDeathOccurred.placeOfInjury.style === 'valid' &&
-        difference.howDeathOccurred.howDeathInjuryOccurred.style === 'valid' &&
-        difference.howDeathOccurred.effectiveDateTime.style === 'valid' &&
-        difference.howDeathOccurred.injuryOccurredAtWork.style === 'valid' &&
-        difference.howDeathOccurred.transportationRole.style === 'valid'
+        difference.howDeathOccurred?.placeOfInjury?.style !== 'invalid' &&
+        difference.howDeathOccurred?.howDeathInjuryOccurred?.style !== 'invalid' &&
+        difference.howDeathOccurred?.effectiveDateTime?.style !== 'invalid' &&
+        difference.howDeathOccurred?.injuryOccurredAtWork?.style !== 'invalid' &&
+        difference.howDeathOccurred?.transportationRole?.style !== 'invalid'
       ) ? 'valid' : 'invalid';
 
-      if (difference.causeOfDeath2.valueCodeableConcept.style === 'invalid' )
+      if (difference.causeOfDeath2?.valueCodeableConcept?.style === 'invalid' )
       {
         difference.causeAndMannerStatus = 'invalid';
       }
 
-      if (difference.mannerOfDeath.valueCodeableConcept.style === 'invalid' )
+      if (difference.mannerOfDeath?.valueCodeableConcept?.style === 'invalid' )
       {
         difference.causeAndMannerStatus = 'invalid';
       }

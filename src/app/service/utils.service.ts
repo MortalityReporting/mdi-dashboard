@@ -43,6 +43,7 @@ export class UtilsService {
     try {
       JSON.parse(str.trim());
     } catch (e) {
+      console.error('JSON parse error:', e); // Add this
       return false;
     }
     return true;

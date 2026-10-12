@@ -12,7 +12,7 @@
     <div
       role="list"
       [attr.aria-label]="'Available testing workflows'">
-      @for (test of standaloneTests; track test.name) {
+      @for (test of standaloneTests(); track test.name) {
         <div
           class="margin-top-lg margin-bottom-md"
           role="listitem">

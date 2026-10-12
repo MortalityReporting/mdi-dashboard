@@ -13,7 +13,7 @@
   In a real workflow, this will vary on a number of factors, including the type of connection.
   For backend services connecting to other backend services, this is typically "machine to machine"
   which is how this example is configured. Frontend applications instead begin with a user login process,
-  such as through a single sign on service, replacing this skip.
+  such as through a single sign on service, replacing this step.
 </div>
 
 <div class="padding-top-md">
@@ -23,33 +23,35 @@
         <mat-tab label="Request Parameters">
           <dl class="grid-container" role="list" aria-label="OAuth request parameters">
             <div class="grid-row" role="listitem">
-              <div class="grid-item display">{{ uiConstantsStep2.auth0Credentials.accessTokenUrl.display }}:</div>
-              <div class="grid-item value">{{ uiConstantsStep2.auth0Credentials.accessTokenUrl.value }}</div>
+              <div class="grid-item display">Token URL:</div>
+              <div class="grid-item value">{{ uiConstantsStep2.oAuthCredentials.accessTokenUrl }}</div>
             </div>
             <div class="grid-row" role="listitem">
-              <div class="grid-item display">{{ uiConstantsStep2.auth0Credentials.clientId.display }}:</div>
-              <div class="grid-item value">{{ uiConstantsStep2.auth0Credentials.clientId.value }}</div>
+              <div class="grid-item display">Client ID:</div>
+              <div class="grid-item value">{{ uiConstantsStep2.oAuthCredentials.clientId }}</div>
             </div>
             <div class="grid-row" role="listitem">
-              <div class="grid-item display">{{ uiConstantsStep2.auth0Credentials.clientSecret.display }}:</div>
-              <div class="grid-item value">{{ uiConstantsStep2.auth0Credentials.clientSecret.value }}</div>
+              <div class="grid-item display">Client Secret:</div>
+              <div class="grid-item value">{{ uiConstantsStep2.oAuthCredentials.clientSecret }}</div>
             </div>
             <div class="grid-row" role="listitem">
-              <div class="grid-item display">{{ uiConstantsStep2.auth0Credentials.grantType.display }}:</div>
-              <div class="grid-item value">{{ uiConstantsStep2.auth0Credentials.grantType.value }}</div>
+              <div class="grid-item display">Grant Type:</div>
+              <div class="grid-item value">{{ uiConstantsStep2.oAuthCredentials.grantType }}</div>
             </div>
-            <div class="grid-row" role="listitem">
-              <div class="grid-item display">{{ uiConstantsStep2.auth0Credentials.audience.display }}:</div>
-              <div class="grid-item value">{{ uiConstantsStep2.auth0Credentials.audience.value }}</div>
-            </div>
+            @if(uiConstantsStep2.oAuthCredentials?.audience){
+              <div class="grid-row" role="listitem">
+                <div class="grid-item display">Audience:</div>
+                <div class="grid-item value">{{ uiConstantsStep2.oAuthCredentials.audience }}</div>
+              </div>
+            }
           </dl>
 
         </mat-tab>
         <mat-tab label="Curl Example">
           <div class="code-container">
-            <pre lang="bash" role="region" aria-label="Curl command example">{{ uiConstantsStep2.auth0Credentials.curlExample.display }}</pre>
+            <pre lang="bash" role="region" aria-label="Curl command example">{{ curlExample().display }}</pre>
             <button class="icon"
-                    (click)="onCopyToClipboard(uiConstantsStep2.auth0Credentials.curlExample.value)"
+                    (click)="onCopyToClipboard(curlExample().value)"
                     [matTooltip]="'Copy curl command to clipboard'"
                     aria-label="Copy curl command to clipboard"
                     type="button">

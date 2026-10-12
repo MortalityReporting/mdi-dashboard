@@ -1,5 +1,5 @@
-import {inject, Inject, Injectable} from '@angular/core';
-import {catchError, Observable} from "rxjs";
+import {Inject, Injectable} from '@angular/core';
+import {Observable} from "rxjs";
 import {Address, BundleHelperService, FhirClientService, FhirHelperService,} from "../../fhir-util";
 import {map} from "rxjs/operators";
 import {FHIRProfileConstants} from "../../../providers/fhir-profile-constants";
@@ -16,7 +16,6 @@ import {
 import {MdiToEdrsDocumentHandlerService} from "./mdi-to-edrs-document-handler.service";
 import {PatientNameReturn} from "../../fhir-util/services/fhir-helper.service";
 import {AppConstants} from "../../../providers/app-constants";
-import {SharedHttpErrorService} from "../../../service/shared-http-error.service";
 
 export interface Parameters{
   name: string;
@@ -32,7 +31,6 @@ export interface Parameters{
 export class DcrDocumentHandlerService {
 
   public defaultString: string = this.appConstants.VALUE_NOT_FOUND;
-  private sharedHttpErrorService = inject(SharedHttpErrorService);
 
   constructor(
     private fhirClient: FhirClientService,
@@ -46,7 +44,6 @@ export class DcrDocumentHandlerService {
 
   getRecords(): Observable<DcrGridDTO[]> {
     return this.fhirClient.read('Composition', '$dcr-message').pipe(
-      catchError(error => this.sharedHttpErrorService.handleError(error)),
       map((record: any) => {
         if(!record.entry){
           return [];
@@ -63,7 +60,6 @@ export class DcrDocumentHandlerService {
 
   getById(id: string): Observable<any> {
     return this.fhirClient.read(`Composition/${id}`, '$dcr-message').pipe(
-      catchError(error => this.sharedHttpErrorService.handleError(error)),
       map((record: any) => {
         const documentBundleList = record.entry[1].resource;
         const dcrHeader = this.constructHeader(documentBundleList);
@@ -199,8 +195,6 @@ export class DcrDocumentHandlerService {
 
   submitForm(data: Parameters[]):Observable<any> {
     const parametersResource = { resourceType: "Parameters", parameter: data };
-    return this.fhirClient.create('Parameters' , parametersResource).pipe(
-      catchError(error => this.sharedHttpErrorService.handleError(error)),
-    )
+    return this.fhirClient.create('Parameters' , parametersResource);
   }
 }

@@ -12,7 +12,7 @@ export class ObservationHowDeathInjuryOccurredDiff extends ObservationDiff {
   constructor(actual: any, expected: any) {
     super(actual, expected);
 
-    this.style = 'invalid';
+    this.style = null;
     this.placeOfInjury = new DiffType();
     this.effectiveDateTime = new DiffType();
     this.transportationRole = new DiffType();
@@ -24,6 +24,11 @@ export class ObservationHowDeathInjuryOccurredDiff extends ObservationDiff {
 
   override doDiff() {
     super.doDiff();
+
+    // If parent detected missing resource, all fields are already marked invalid
+    if (this.style === 'invalid') {
+      return;
+    }
 
     // TODO: Move codes to provider in MDI library.
     this.effectiveDateTime.expected = JSON.stringify(this.expected?.effectiveDateTime, null, 4);

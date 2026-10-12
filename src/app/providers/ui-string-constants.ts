@@ -1,9 +1,12 @@
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import {TestStatusCodes} from "../features/testing-events";
 import {Test} from "../features/tests";
+import {ConfigService} from "../config/config.service";
 
 @Injectable()
 export class UiStringConstants {
+
+  private configService = inject(ConfigService);
 
   Common = {
     DECEDENT_NAME: `Decedent Name`,
@@ -13,22 +16,6 @@ export class UiStringConstants {
     DECEDENT_LAST_NAME: `Decedent Last Name`,
     LEGAL_SEX_AT_DEATH: `Legal Sex at Death`,
     DISTRICT_OF_DEATH: `District of Death`,
-  }
-
-  blueJayAuth0Credentials = {
-    grantType: { name: 'GRANT TYPE', value: 'client_credentials', display: 'Grant Type' },
-    accessTokenUrl: { name: 'ACCESS TOKEN URL', value: 'https://dev-dk7cyfpkwowbtdbt.us.auth0.com/oauth/token', display: 'Token URL' },
-    clientId: { name: 'CLIENT ID', value: 'vsRE3dEgCWF24mEf1KOsWD88igoHKAKl', display: 'Client ID' },
-    clientSecret: { name: 'CLIENT SECRET', value: 'UZVZxFR_Ykj2ByXqqsahso0PO1wDk0Wutl2lCvzf-21Y_I2OugTxUa1hnpwb27Ym', display: 'Client Secret' },
-    audience: { name: 'AUDIENCE', value: 'http://bluejay-fhir-api/', display: 'Audience' },
-    curlExample: { display:
-        "curl \t--request POST\n"+
-      "\t--url https://dev-dk7cyfpkwowbtdbt.us.auth0.com/oauth/token\n" +
-      "\t--header 'content-type: application/json\n" +
-      "\t--data '{\"client_id\":\"vsRE3dEgCWF24mEf1KOsWD88igoHKAKl\",\"client_secret\":\"UZVZxFR_Ykj2ByXqqsahso0PO1wDk0Wutl2lCvzf-21Y_I2OugTxUa1hnpwb27Ym\",\"audience\":\"http://bluejay-fhir-api/\",\"grant_type\":\"client_credentials\"}'"
-      ,
-      value: `curl --request POST   --url https://dev-dk7cyfpkwowbtdbt.us.auth0.com/oauth/token   --header 'content-type: application/json'   --data '{"client_id":"vsRE3dEgCWF24mEf1KOsWD88igoHKAKl","client_secret":"UZVZxFR_Ykj2ByXqqsahso0PO1wDk0Wutl2lCvzf-21Y_I2OugTxUa1hnpwb27Ym","audience":"http://bluejay-fhir-api/","grant_type":"client_credentials"}'`
-    }
   }
 
   //The workflow simulator shares some steps for the SEARCH_EDRS and SEARCH_EDRS_BLUEJAY Following are the step constants:
@@ -45,16 +32,19 @@ export class UiStringConstants {
     UPLOAD_FILE_CONTENT_MSG:`Click the "Input MDI to EDRS Document Bundle" button below to paste in your complete Document Bundle resource or click "Select File" to select a plain text (JSON) file from your local drive.`
   };
 
-  private STEP_2_SEARCH_EDRS_BLUEJAY = {
-    STEP_LABEL: `Establish Authorization`,
-    DESCRIPTION: `Step 2 - Establish Connection. The BlueJay test server is provided as a default.`,
-    VIEW_CAPABILITY_STMT_BTN: `View Server Capability Statement`,
-    VIEW_SERVER_$MDI_DOCS_OP_DEFINITION_BTN: `View Server $document Operation Definition`,
-    PROCEED_TO_NEXT_STEP_BTN: `Establish Authorization`,
-    authenticationOptions: ['None', 'Basic', 'Bearer Token'],
-    endpointTypeOptions: ['Registered Endpoint', 'Custom Endpoint'],
-    auth0Credentials: this.blueJayAuth0Credentials
-  };
+  private get STEP_2_SEARCH_EDRS_BLUEJAY() {
+    const config = this.configService.config();
+    return {
+      STEP_LABEL: `Establish Authorization`,
+      DESCRIPTION: `Step 2 - Establish Connection. The BlueJay test server is provided as a default.`,
+      VIEW_CAPABILITY_STMT_BTN: `View Server Capability Statement`,
+      VIEW_SERVER_$MDI_DOCS_OP_DEFINITION_BTN: `View Server $document Operation Definition`,
+      PROCEED_TO_NEXT_STEP_BTN: `Establish Authorization`,
+      authenticationOptions: ['None', 'Basic', 'Bearer Token'],
+      endpointTypeOptions: ['Registered Endpoint', 'Custom Endpoint'],
+      oAuthCredentials: config?.workflowSimulator?.searchEdrsOAuthCredentials
+    };
+  }
 
   private STEP2_SEARCH_EDRS = {
     STEP_LABEL: `Configure Endpoint`,
@@ -145,17 +135,10 @@ export class UiStringConstants {
     {
       name: 'toxRecordSubmission',
       display: 'Toxicology Record Submission',
-      description: "Toxicology record submission description",
+      description: "The Toxicology Record Submission workflow simulation demonstrates the transfer of a toxicology report from a Laboratory Information Management System (LIMS) to a Coroner & Medical Examiner's Case Management System (CMS). In this simulation, the user provides the CMS toxicology receiving API endpoint URL, user credentials, and any required headers.",
       status: TestStatusCodes.notStarted,
       route: 'tox-submission'
-    },
-    {
-      name: 'updateEdrs',
-      display: 'Update EDRS',
-      description: "Updated EDRS module description",
-      status: TestStatusCodes.notStarted,
-      route: 'update-edrs'
-    },
+    }
   ];
 
 }

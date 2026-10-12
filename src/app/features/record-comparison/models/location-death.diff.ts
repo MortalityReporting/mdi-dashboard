@@ -10,7 +10,7 @@ export class LocationDeathDiff extends LocationDiff {
     {
         super( actual, expected );
 
-        this.style = 'invalid';
+        this.style = null;
         this.status = new DiffType();
         this.identifier = new DiffType();
 
@@ -20,6 +20,11 @@ export class LocationDeathDiff extends LocationDiff {
     override doDiff()
     {
         super.doDiff();
+
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
 
         try {
             this.status.expected = JSON.stringify( this.expected.status, null, 4 );

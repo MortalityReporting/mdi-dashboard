@@ -1,12 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {catchError, Observable, Subject} from "rxjs";
+import {Injectable} from '@angular/core';
+import {Observable, Subject} from "rxjs";
 import {DecedentSimpleInfo} from "../../../model/decedent-simple-info";
 import {map} from "rxjs/operators";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {TestStatusCodes} from "../../testing-events";
 import {AppConstants} from "../../../providers/app-constants";
 import {ConfigService} from "../../../config/config.service";
-import {SharedHttpErrorService} from "../../../service/shared-http-error.service";
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +26,6 @@ export class SearchEdrsService {
 
   private endpoint = new Subject<any>();
   endpoint$ = this.endpoint.asObservable();
-
-  private sharedHttpErrorService = inject(SharedHttpErrorService);
 
   constructor(
     private http:HttpClient,
@@ -85,7 +82,6 @@ export class SearchEdrsService {
     });
 
     return this.http.post(operationDefinitionLocation, params, httpOptions).pipe(
-      catchError(error => this.sharedHttpErrorService.handleError(error)),
       map((result: any) => {
         if (result?.total > 0) {
           this.setTestStatus(TestStatusCodes.complete); // The compete status is set ONLY when at least one record is returned

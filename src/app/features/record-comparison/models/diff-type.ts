@@ -10,17 +10,17 @@ export class DiffType
         this.actual = "";
         this.expected = "";
         this.difference = "";
-        this.style = "invalid";
-    }  
+        this.style = null;
+    }
 
     static doDiff( parts: any ): [string,string]
-    {    
+    {
         var html = "<pre>";
         let style = 'valid';
-  
+
         parts.map( part => {
             let span = "<span>";
-  
+
             if (part.added != undefined && part.added == true)
             {
                 style = 'invalid';
@@ -31,12 +31,12 @@ export class DiffType
                 style = 'invalid';
                 span = '<span class="diff-removed-color">';
             }
-  
+
             html += span + part.value + '</span>';
         });
-  
+
         html += "</pre>";
-  
+
         return [style,html];
     }
 }

@@ -81,6 +81,11 @@
   cursor: pointer;
 }
 
+.no-data-icon{
+  color: gray;
+  margin-right: 0.2rem;
+}
+
 .valid-icon {
   margin-right: 0.2rem;
   color: #388e3c;
@@ -117,3 +122,6 @@
   overflow: hidden;
 }
 
+.note{
+  font-weight: normal;
+}

@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, catchError, Observable} from 'rxjs';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+
+import {BehaviorSubject, Observable} from 'rxjs';
 import {FhirResource} from "../../fhir-util";
 import {ConfigService} from "../../../config/config.service";
-import {SharedHttpErrorService} from "../../../service/shared-http-error.service";
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +14,9 @@ export class FhirExplorerService {
   fhirResource$ = this.fhirResource.asObservable();
 
   apiUrl: string;
-  private sharedHttpErrorService = inject(SharedHttpErrorService);
 
   constructor(private configService: ConfigService, private http:HttpClient) {
-    this.apiUrl =`${this.configService.getApiUrl('fhirValidatorUrl')}$translate`
+    this.apiUrl =`${this.configService.getApiUrl('fhirValidatorUrl')}$convert`
   }
 
   setSelectedFhirResource(fhirResource: any) {
@@ -34,10 +33,12 @@ export class FhirExplorerService {
 
     const options  = {
       responseType: 'text' as 'text',
+      headers: new HttpHeaders({
+        'Accept': 'application/xml'
+      })
     };
 
-    return this.http.post(this.apiUrl, body, options ).pipe(
-      catchError(error => this.sharedHttpErrorService.handleError(error))
-    );
+    return this.http.post(this.apiUrl, body, options );
   }
+
 }

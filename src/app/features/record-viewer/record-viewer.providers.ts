@@ -11,7 +11,7 @@ import { ModuleHeaderConfig } from '../../providers/module-header-config';
 function initializeRecordViewerIcons(): void {
   const matIconRegistry = inject(MatIconRegistry);
   const domSanitizer = inject(DomSanitizer);
-  const path = "assets";
+  const path = "assets/files/svg";
 
   matIconRegistry.addSvgIcon("labs", domSanitizer
     .bypassSecurityTrustResourceUrl(`${path}/labs.svg`));

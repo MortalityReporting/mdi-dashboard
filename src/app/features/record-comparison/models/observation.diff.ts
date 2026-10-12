@@ -1,5 +1,6 @@
 import * as Diff from 'diff';
 import {DiffType} from './diff-type';
+import {markFieldInvalid} from './base-diff.helper';
 
 export class ObservationDiff {
     code: DiffType;
@@ -18,7 +19,7 @@ export class ObservationDiff {
         this.actual = actual;
         this.expected = expected;
 
-        this.style = 'invalid';
+        this.style = null;
         this.code = new DiffType();
         this.id = new DiffType();
         this.meta = new DiffType();
@@ -26,8 +27,29 @@ export class ObservationDiff {
         this.subject = new DiffType();
     }
 
+    /**
+     * Helper method to mark all DiffType properties as invalid when a resource is missing
+     */
+    protected markAllFieldsInvalid(): void {
+        this.style = 'invalid';
+
+        // Iterate through all properties and mark DiffType instances as invalid
+        Object.keys(this).forEach(key => {
+            const value = (this as any)[key];
+            if (value instanceof DiffType) {
+                markFieldInvalid(this, value, key);
+            }
+        });
+    }
+
     doDiff()
     {
+        // Check if one resource exists but the other doesn't
+        if ((this.actual && !this.expected) || (!this.actual && this.expected)) {
+            this.markAllFieldsInvalid();
+            return;
+        }
+
         try {
             this.code.expected = JSON.stringify( this.expected.code, null, 4 );
             this.code.actual = JSON.stringify( this.actual.code, null, 4 );

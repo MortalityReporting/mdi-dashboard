@@ -11,7 +11,7 @@ export class ObservationAutopsyPerformedDiff extends ObservationDiff {
     {
         super( actual, expected );
 
-        this.style = 'invalid';
+        this.style = null;
         this.componentValueCodeableConcept = new DiffType();
         this.status = new DiffType();
         this.valueCodeableConcept = new DiffType();
@@ -22,6 +22,11 @@ export class ObservationAutopsyPerformedDiff extends ObservationDiff {
     override doDiff()
     {
         super.doDiff();
+
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
 
         try {
             this.componentValueCodeableConcept.expected = JSON.stringify( this.expected.component[0].valueCodeableConcept, null, 4 );

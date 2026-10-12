@@ -48,8 +48,10 @@
             <mat-form-field class="form-field" appearance="outline" floatLabel="always">
               <mat-label>Date of Death</mat-label>
               <input matInput [matDatepicker]="datepicker" formControlName="dateOfDeath">
-              @if (dcrForm.controls.deathInvestigation.controls.dateOfDeath.invalid) {
+              @if (dcrForm.controls.deathInvestigation.controls.dateOfDeath.hasError('required')) {
                 <mat-error>Date of Death is required</mat-error>
+              } @else if (dcrForm.controls.deathInvestigation.controls.dateOfDeath.hasError('invalidYear')) {
+                <mat-error>Year must be 4 digits</mat-error>
               }
               <mat-datepicker #datepicker/>
               <mat-datepicker-toggle [for]="datepicker" matSuffix/>
@@ -326,8 +328,10 @@
             <mat-form-field class="form-field" appearance="outline" floatLabel="always">
               <mat-label>Date of Birth</mat-label>
               <input matInput [matDatepicker]="datepickerDob" formControlName="decedentDateOfBirth">
-              @if (dcrForm.controls.decedentInfo.controls.decedentDateOfBirth.invalid) {
+              @if (dcrForm.controls.decedentInfo.controls.decedentDateOfBirth.hasError('required')) {
                 <mat-error>Date of Birth is required</mat-error>
+              } @else if (dcrForm.controls.decedentInfo.controls.decedentDateOfBirth.hasError('invalidYear')) {
+                <mat-error>Year must be 4 digits</mat-error>
               }
               <mat-datepicker #datepickerDob/>
               <mat-datepicker-toggle [for]="datepickerDob" matSuffix/>

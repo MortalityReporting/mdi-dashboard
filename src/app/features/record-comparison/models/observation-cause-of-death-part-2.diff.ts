@@ -20,6 +20,11 @@ export class ObservationCauseOfDeathPart2Diff extends ObservationDiff {
     {
         super.doDiff();
 
+        // If parent detected missing resource, all fields are already marked invalid
+        if (this.style === 'invalid') {
+            return;
+        }
+
         try {
             this.performer.expected = JSON.stringify( this.expected.performer, null, 4 );
             this.performer.actual = JSON.stringify( this.actual.performer, null, 4 );
