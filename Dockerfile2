@@ -14,7 +14,7 @@ RUN npm run build -- \
     --base-href=$BASE_HREF
 
 # Stage 2: Nginx
-FROM nginx:1.27-alpine
+FROM nginx:1.30-alpine
 
 # Install gettext for envsubst
 RUN apk add --no-cache gettext
