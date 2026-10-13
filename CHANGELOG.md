@@ -3,7 +3,7 @@
 ## [1.9.1] - 2026-10-13
 ### Changed
 * Consolidated Dockerfiles.
-* Updated NGINX image in Dockerfile.
+* Updated NGINX image in Dockerfile. (1.27-alpine -> 1.30-alpine)
 ### Fixed
 * Addressed Libcurl vulnerability in docker image. (7.83.1 -> 8.22.0)
 
