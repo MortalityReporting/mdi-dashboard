@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased] - 
+### Fixed
+* Fixed the FHIR create resource function.
+
 ## [1.9.1] - 2026-10-13
 ### Changed
 * Consolidated Dockerfiles.
