@@ -3,9 +3,11 @@
 </div>
 <p>You may select a local JSON file or paste the JSON directly into the provided area below.</p>
 <p><b> Warning:</b> To prevent the creation of duplicate records, existing records are overwritten.</p>
-@if (showValidatorLoading()) {
-  <app-validator-loading-message></app-validator-loading-message>
-} @else if (validatorReady()) {
+@if (isDataLoading()) {
+  <app-validator-loading-message
+    [messageTxt]="'The FHIR validator is initializing. Validation is required for import and will be available shortly'"
+  ></app-validator-loading-message>
+} @else {
   <div class="content-offset">
     <app-fhir-validator-lib
       [formatResourceBtnShown]="false"
@@ -30,7 +32,7 @@
   <h3>2. Validate Record</h3>
   <div class="content-offset">
     <button mat-raised-button [style.background-color]="config.backgroundColor" [style.color]="'white'"
-            (click)="onValidate()" [disabled]="!validatorReady()">
+            (click)="onValidate()" [disabled]="isDataLoading()">
       Validate Record
     </button>
   </div>

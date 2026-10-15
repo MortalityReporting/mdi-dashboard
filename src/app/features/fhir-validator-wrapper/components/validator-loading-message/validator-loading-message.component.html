@@ -3,7 +3,8 @@
   aria-label="FHIR validator loading status">
   <mat-icon aria-hidden="true">info</mat-icon>
   <div class="loading-text">
-    The FHIR validator is loading. Please wait while its implementation guides are prepared<span
+    {{ messageTxt() }}
+    <span
       class="loading-ellipsis"
       aria-hidden="true"></span>
   </div>
