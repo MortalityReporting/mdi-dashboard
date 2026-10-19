@@ -8,5 +8,5 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './validator-loading-message.component.css',
 })
 export class ValidatorLoadingMessageComponent {
-  messageTxt = input<string>('The FHIR validator is loading. Please wait while its implementation guides are prepared'); // default message
+  messageTxt = input<string>('The FHIR Validator is temporarily unavailable while loading implementation guides'); // default message
 }
