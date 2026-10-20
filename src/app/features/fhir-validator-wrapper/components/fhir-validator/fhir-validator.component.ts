@@ -103,8 +103,6 @@ export class FhirValidatorComponent implements OnInit, OnDestroy {
   selectedIG: ImplementationGuide;
   localResultDetailsExpanded: boolean = true; // Local state for expand/collapse button
 
-  SERVER_TIMEOUT_INTERVAL = 8000; // 8 seconds
-
   igSelectionFg = new FormGroup({});
 
   constructor(
@@ -454,17 +452,6 @@ export class FhirValidatorComponent implements OnInit, OnDestroy {
           this.sharedHttpWarningService.hideWarningComponent();
         }
       });
-
-    //TODO make sure to remove this function when the server side timeout is implemented.
-    setTimeout(
-      () => {
-        if(this.isLoading) {
-          this.sharedHttpWarningService.setWarningMessage(
-            'The validator is downloading and caching packages and data, please wait or try later'
-          );
-        }
-      }, this.SERVER_TIMEOUT_INTERVAL
-    );
 
   }
 

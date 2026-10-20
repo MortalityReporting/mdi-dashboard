@@ -3,6 +3,10 @@
 ## [Unreleased] - 
 ### Fixed
 * Fixed the FHIR create resource function.
+* Removed the file type for import api.
+* Removed the old workflow message triggered if the validator does not respond.
+* Updated find resource by url function
+* Bugfix on the FHIR validator loading IG message
 
 ## [1.9.1] - 2026-10-13
 ### Changed

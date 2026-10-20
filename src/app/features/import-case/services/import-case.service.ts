@@ -16,8 +16,6 @@ export class ImportCaseService {
 
   uploadFile(file, apiImportParameter: string): Observable<any> {
 
-    const fileExtension = file.name.substring(file.name.length, (file.name.lastIndexOf('.')) + 1);
-    let uriFileTypeSubstring = `upload-${fileExtension}-file`;
     let params = new HttpParams()
       .set('type', apiImportParameter)
 
@@ -25,7 +23,7 @@ export class ImportCaseService {
 
     formData.append("file", file, file.name);
 
-    return this.http.post(this.configService.getApiUrl('ravenImportApiUrl') + uriFileTypeSubstring, formData, { params:params })
+    return this.http.post(this.configService.getApiUrl('ravenImportApiUrl'), formData, { params:params })
   }
 
   importResource(fhirResource): Observable<any> {
