@@ -3,7 +3,7 @@
 ## [Unreleased] - 
 ### Fixed
 * Fixed the FHIR create resource function.
-* Removed the file type for import api.
+* Removed the file type selection from the record import from template, and updated the API call.
 * Removed the old workflow message triggered if the validator does not respond.
 * Updated find resource by url function
 * Bugfix on the FHIR validator loading IG message

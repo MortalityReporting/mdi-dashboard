@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ConfigService} from "../../../config/config.service";
 
@@ -14,16 +14,11 @@ export class ImportCaseService {
     private configService: ConfigService
   ) {}
 
-  uploadFile(file, apiImportParameter: string): Observable<any> {
-
-    let params = new HttpParams()
-      .set('type', apiImportParameter)
-
+  uploadFile(file): Observable<any> {
     const formData = new FormData();
 
     formData.append("file", file, file.name);
-
-    return this.http.post(this.configService.getApiUrl('ravenImportApiUrl'), formData, { params:params })
+    return this.http.post(this.configService.getApiUrl('ravenImportApiUrl'), formData)
   }
 
   importResource(fhirResource): Observable<any> {
