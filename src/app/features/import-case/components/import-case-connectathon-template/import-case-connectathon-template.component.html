@@ -15,17 +15,17 @@
     <div class="padding-top-md">
       <h3>2. Submit Test Cases to Raven</h3>
       <div class="row">
-        Select your completed spreadsheet, and submit to raven.
+        Select your completed spreadsheet and submit to raven.
       </div>
       <div class="row margin-top-md">
-          <button mat-raised-button class="upload-btn"
-          (click)="clearUI(); fileUpload.click();" [disabled]="isLoading()"
-          [style.background-color]="config.backgroundColor" [style.color]="'white'"
-          >
+        <button mat-raised-button class="upload-btn"
+                (click)="clearUI(); fileUpload.click();" [disabled]="isLoading()"
+                [style.background-color]="config.backgroundColor" [style.color]="'white'"
+        >
           <mat-icon>upload_file</mat-icon>
           Browse for Import Spreadsheet
-          </button>
-        <span class="file-name margin-left-md">{{file?.name}}
+        </button>
+        <span class="file-name margin-left-md">{{ file?.name }}
           @if (fileSelectionAttempted() && !file) {
             <span class="file-selection-error danger-color" role="alert">Select a file to import.</span>
           }
