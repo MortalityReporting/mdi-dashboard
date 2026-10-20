@@ -15,49 +15,32 @@
     <div class="padding-top-md">
       <h3>2. Submit Test Cases to Raven</h3>
       <div class="row">
-        Select your completed spreadsheet, the type of the template used, and submit to raven.
+        Select your completed spreadsheet and submit to raven.
       </div>
       <div class="row margin-top-md">
         <button mat-raised-button class="upload-btn"
-          (click)="clearUI(); fileUpload.click();" [disabled]="isLoading()"
-          [style.background-color]="config.backgroundColor" [style.color]="'white'"
-          >
+                (click)="clearUI(); fileUpload.click();" [disabled]="isLoading()"
+                [style.background-color]="config.backgroundColor" [style.color]="'white'"
+        >
           <mat-icon>upload_file</mat-icon>
           Browse for Import Spreadsheet
         </button>
-        <span class="file-name margin-left-md">{{file?.name}}
-          @if (form.submitted &&!file) {
-            <mat-error
-              >No File Selected.
-            </mat-error>
+        <span class="file-name margin-left-md">{{ file?.name }}
+          @if (fileSelectionAttempted() && !file) {
+            <span class="file-selection-error danger-color" role="alert">Select a file to import.</span>
           }
         </span>
       </div>
     </div>
     <div class="margin-top-md">
-      <form [formGroup]="importCaseForm" (ngSubmit)="onSubmit()" class="row" #form="ngForm" >
-        <mat-form-field appearance="outline" style="min-width: 50%" class="margin-top-sm">
-          <mat-label>Select Template Type</mat-label>
-          <mat-select formControlName="fileTemplate">
-            @for (template of fileTemplates; track template) {
-              <mat-option [value]="template">
-                {{template.description}}
-              </mat-option>
-            }
-          </mat-select>
-          @if (fileTemplate.errors?.['required']) {
-            <mat-error>
-              Please select a template type above...
-            </mat-error>
-          }
-        </mat-form-field>
-        <div class="content-spacer"></div>
-        <button mat-raised-button type=submit
-          [style.background-color]="config.backgroundColor"
-          [style.color]="'white'" [disabled]="isLoading()">
-          Submit
-        </button>
-      </form>
+      <div class="row">
+         <div class="content-spacer"></div>
+         <button mat-raised-button type="button" (click)="onSubmit()"
+           [style.background-color]="config.backgroundColor"
+           [style.color]="'white'" [disabled]="isLoading()">
+           Submit
+         </button>
+      </div>
     </div>
   </div>
 
@@ -118,7 +101,7 @@
                     <mat-icon>open_in_full</mat-icon>
                   </button>
                 </div>
-                <div><pre> {{$safeNavigationMigration(selectedCase?.fhirBundle) | json}} </pre></div>
+                <div><pre> {{selectedCase?.fhirBundle | json}} </pre></div>
               </div>
             </mat-tab>
           </mat-tab-group>

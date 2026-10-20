@@ -153,7 +153,7 @@ export class DcrDocumentHandlerService {
       return null;
     }
     const name  = this.fhirHelper.getOfficialName(practitionerResource) || this.defaultString;
-    const email = practitionerResource.telecom.find(el=> el.system == 'email').value || this.defaultString;
+    const email = practitionerResource.telecom.find(el=> el.system == 'email')?.value || this.defaultString;
     return {name: name, resource: practitionerResource, email: email};
   }
 
