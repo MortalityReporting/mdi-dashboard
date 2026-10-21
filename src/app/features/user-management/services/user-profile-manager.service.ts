@@ -49,6 +49,7 @@ export class UserProfileManagerService {
   getUserProfile(email: string): Observable<UserProfile | null> {
     return this.fhirClient.search("Practitioner", `?telecom=${email}`, true).pipe(
       map((results: FhirResource[] | Bundle) => {
+        console.log("LOG for testing!!!");
         const first = this.firstResource(results);
         return first ? UserProfile.constructFromFHIR(first) : null;
       })
