@@ -57,8 +57,7 @@ export class UserProfileManagerService {
 
   private firstResource(results: FhirResource[] | Bundle | null | undefined): FhirResource | undefined {
     if (!results) {
-      console.error("No user resource found in the Bundle.");
-      throw new Error("No user resource found in the Bundle.");
+      return null;
     }
     if (Array.isArray(results)) {
       return results[0];
