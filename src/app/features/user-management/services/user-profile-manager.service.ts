@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Bundle, FhirClientService, FhirResource} from "../../fhir-util";
-import {BehaviorSubject, map, Observable, single, tap} from "rxjs";
+import {BehaviorSubject, catchError, filter, map, Observable, of, single, switchMap, throwError} from "rxjs";
 import {UserProfile} from "../models/user-profile";
 
 @Injectable({
@@ -14,21 +14,25 @@ export class UserProfileManagerService {
     private fhirClient: FhirClientService) {
   }
 
-  setCurrentUser(user: any) {
-    //TODO: Don't subscribe inside a services
-    this.getUserProfile(user.email).subscribe({
-      next: (userProfile: UserProfile) => {
-        if (userProfile) {
-          this.currentUser.next(userProfile);
-        } else {
-          console.warn("User Profile not found on FHIR Server, creating new Resource.")
-          this.createUserProfile(user.name, user.email).subscribe({
-            next: (user: UserProfile) => {this.currentUser.next(user)}
-          })
-          //this.currentUser.next(this.createUserProfile(user.name, user.email));
+  setCurrentUser(user: any): void {
+    this.getOrCreateUserProfile(user)
+      .pipe(
+        filter((profile): profile is UserProfile => profile !== null),
+        catchError(error => {
+          console.error("Error retrieving the user profile resource", error);
+          return throwError(() => error);
+        })
+      )
+      .subscribe(profile => this.currentUser.next(profile));
+  }
+
+  private getOrCreateUserProfile(user: any): Observable<UserProfile | null> {
+    return this.getUserProfile(user.email).pipe(
+      switchMap(profile => {
+          return profile ? of(profile) : this.createUserProfile(user.name, user.email)
         }
-      }
-    });
+      )
+    );
   }
 
   getAllUsers(): Observable<UserProfile[]> {
@@ -45,30 +49,38 @@ export class UserProfileManagerService {
   getUserProfile(email: string): Observable<UserProfile | null> {
     return this.fhirClient.search("Practitioner", `?telecom=${email}`, true).pipe(
       map((results: FhirResource[] | Bundle) => {
-        return (results as FhirResource[])?.length === 0 ? null :
-          UserProfile.constructFromFHIR(results[0])
+        const first = this.firstResource(results);
+        return first ? UserProfile.constructFromFHIR(first) : null;
       })
     );
   }
 
-  createUserProfile(name: string, email: string) {//: Observable<UserProfile> {
+  private firstResource(results: FhirResource[] | Bundle | null | undefined): FhirResource | undefined {
+    if (!results) {
+      console.error("No user resource found in the Bundle.");
+      throw new Error("No user resource found in the Bundle.");
+    }
+    if (Array.isArray(results)) {
+      return results[0];
+    }
+    return results.entry?.[0]?.resource;
+  }
+
+  createUserProfile(name: string, email: string) {
     let userProfile = UserProfile.constructFromStrings(name, email);
     const fhirResource = userProfile.toFhirJSON();
     let request$ = this.fhirClient.create("Practitioner", fhirResource).pipe(
       map((result: FhirResource) => {
-        if (result.resourceType === "OperationOutcome") return null; // TODO: Add error handling
-        else {
-          return UserProfile.constructFromFHIR(result)
+        // OperationOutcome is an application-level failure even when the HTTP request succeeded.
+        if (!result || result.resourceType === "OperationOutcome") {
+          console.error("FHIR server returned an OperationOutcome while creating a user profile.", result)
+          throw new Error("FHIR server returned an OperationOutcome while creating a user profile.");
         }
+        return UserProfile.constructFromFHIR(result);
       }))
 
     return request$;
   }
-
-  //
-  // updateUserProfile(userProfile: UserProfile): Observable<FhirResource> {
-  //
-  // }
 
   checkIfUserEmailExists(email): Observable<boolean> {
     return this.fhirClient.search("Practitioner", `?telecom=${email}`, true).pipe(
