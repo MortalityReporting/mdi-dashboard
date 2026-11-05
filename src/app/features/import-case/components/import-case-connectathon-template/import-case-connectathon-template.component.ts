@@ -63,8 +63,9 @@ export class ImportCaseConnectathonTemplateComponent {
       return;
     }
     if (this.file.size > this.MAX_FILE_SIZE) {
-      console.error("File too big")
+      console.error("File too big");
       this.utilsService.showErrorMessage("This file exceeds " + this.MAX_FILE_SIZE / 10000 + "mb and cannot be processed");
+      this.file = null;
       return;
     }
     this.selectedCase = null;
