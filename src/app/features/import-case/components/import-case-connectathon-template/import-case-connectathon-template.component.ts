@@ -36,7 +36,7 @@ export class ImportCaseConnectathonTemplateComponent {
   isLoading = signal<boolean>(false);
   selectedCase: any;
   file: File = null;
-  MAX_FILE_SIZE = 100000; // Max allowed file size is 100KB
+  MAX_FILE_SIZE = 2000000; // Max allowed file size is 2MB
   displayedColumns: string[] = ['name', 'status', 'state'];
   dataSource = new MatTableDataSource<any>();
   isExportSuccessful = signal<boolean>(false);
@@ -63,8 +63,9 @@ export class ImportCaseConnectathonTemplateComponent {
       return;
     }
     if (this.file.size > this.MAX_FILE_SIZE) {
-      console.error("File too big")
-      this.utilsService.showErrorMessage("This file exceeds " + this.MAX_FILE_SIZE / 1000 + "kb and cannot be processed");
+      console.error("File too big");
+      this.utilsService.showErrorMessage("This file exceeds " + this.MAX_FILE_SIZE / 10000 + "mb and cannot be processed");
+      this.file = null;
       return;
     }
     this.selectedCase = null;
