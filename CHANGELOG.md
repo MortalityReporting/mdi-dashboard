@@ -7,6 +7,7 @@
 * Removed the old workflow message triggered if the validator does not respond.
 * Updated find resource by url function
 * Bugfix on the FHIR validator loading IG message
+* When the user logs in, if not User Profile resources is found, create a new User Profile
 
 ## [1.9.1] - 2026-10-13
 ### Changed
