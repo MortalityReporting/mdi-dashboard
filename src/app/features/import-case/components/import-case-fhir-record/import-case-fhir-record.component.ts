@@ -1,4 +1,4 @@
-import {Component, computed, DestroyRef, Inject, OnInit, ViewChild, ChangeDetectionStrategy, signal} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Inject, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {ImportCaseService} from "../../services/import-case.service";
 import {UtilsService} from "../../../../service/utils.service";
@@ -15,7 +15,6 @@ import {openConfirmationDialog} from "../../../../components/widgets/confirmatio
 import {FhirValidatorReadinessService} from "../../../fhir-validator-wrapper/services/fhir-validator-readiness.service";
 import {ValidatorLoadingMessageComponent} from "../../../fhir-validator-wrapper/components/validator-loading-message/validator-loading-message.component";
 import {SharedHttpErrorService} from "../../../../service/shared-http-error.service";
-
 
 @Component({
     selector: 'app-import-case-fhir-record',
@@ -34,10 +33,9 @@ export class ImportCaseFhirRecordComponent implements OnInit {
 
   @ViewChild(FhirValidatorComponent) fhirValidator
 
-  readonly validatorReady = signal(false);
-  readonly showValidatorLoading = computed(() =>
-    !this.validatorReady() && !this.sharedHttpErrorService.errorDetected()
-  );
+  private readonly sharedHttpErrorService = inject(SharedHttpErrorService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  isDataLoading = signal(true);
 
   isLoading: boolean = false;
   fhirResource: any;
@@ -57,26 +55,22 @@ export class ImportCaseFhirRecordComponent implements OnInit {
     private dialog: MatDialog,
     private fhirValidatorResultsExportService: FhirValidatorResultsExportService,
     private fhirValidatorReadinessService: FhirValidatorReadinessService,
-    private sharedHttpErrorService: SharedHttpErrorService,
     private destroyRef: DestroyRef) {
   }
 
   ngOnInit(): void {
     this.fhirValidatorReadinessService.getValidatorLoaded()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: response => {
           if (response.status === 'ready') {
-            this.validatorReady.set(true)
-          }
-          else {
-            this.sharedHttpErrorService.setErrorMessage(
-              `FHIR Validator returned unknown status of ${response.status}`
-            );
+            this.isDataLoading.set(false);
+            this.changeDetectorRef.detectChanges();
           }
         },
         error: error => {
+          this.isDataLoading.set(false);
+          this.changeDetectorRef.detectChanges();
           this.sharedHttpErrorService.setErrorMessage(
             'FHIR validator encountered error while loading data.'
           );

@@ -45,11 +45,6 @@ export class FhirValidatorWrapperComponent implements OnInit {
           if (response.status === 'ready') {
             this.isDataLoading.set(false);
           }
-          else {
-            this.sharedHttpErrorService.setErrorMessage(
-              `FHIR Validator returned unknown status of ${response.status}`
-            );
-          }
         },
         error: error => {
           this.sharedHttpErrorService.setErrorMessage(

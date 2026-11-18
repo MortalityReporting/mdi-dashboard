@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { defer, last, Observable, repeat, shareReplay, takeWhile, timer } from 'rxjs';
+import {defer, delayWhen, filter, Observable, repeatWhen, shareReplay, take, timer} from 'rxjs';
 
 import { ValidatorLoadedResponse } from '../models/validator-loaded-response';
 
-const VALIDATOR_POLL_INTERVAL_MS = 3000;
+const VALIDATOR_POLL_INTERVAL_MS = 1000;
 
 @Injectable({ providedIn: 'root' })
 export class FhirValidatorReadinessService {
@@ -17,9 +17,11 @@ export class FhirValidatorReadinessService {
     const url = this.serverBaseUrl + 'health';
 
     this.validatorLoaded$ = defer(() => this.fetchValidatorStatus(url)).pipe(
-      repeat({ delay: () => timer(VALIDATOR_POLL_INTERVAL_MS) }),
-      takeWhile(response => response.status !== 'ready', true),
-      last(),
+      repeatWhen(completions =>
+        completions.pipe(delayWhen(() => timer(VALIDATOR_POLL_INTERVAL_MS)))
+      ),
+      filter(response => response.status === 'ready'),
+      take(1),
       shareReplay({ bufferSize: 1, refCount: true })
     );
   }

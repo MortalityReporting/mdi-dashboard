@@ -56,6 +56,7 @@ export class DcrViewerComponent implements OnInit{
       next: data => {
         this.isLoading.set(false);
         this.dcrRecord.set(data);
+        this.fhirExplorerService.setSelectedFhirResource(data?.resource);
       },
       error: err => {
         console.error(err);

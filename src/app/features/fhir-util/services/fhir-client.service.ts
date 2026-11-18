@@ -19,7 +19,7 @@ export class FhirClientService {
   }
 
   create(resourceType: string, resource: any): Observable<FhirResource> {
-    return this.http.post<FhirResource>(`${this.configService.getApiUrl('ravenFhirServer')}`, resource);
+    return this.http.post<FhirResource>(`${this.configService.getApiUrl('ravenFhirServer')}/${resourceType}`, resource);
   }
 
   update(resourceType: string, resource: FhirResource): Observable<FhirResource> {

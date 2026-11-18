@@ -71,7 +71,7 @@ export class BundleHelperService {
     if(!bundle || !bundle.entry){
       return null;
     }
-    return (bundle.entry.find((entry: any) => entry.fullUrl === fullUrlReference))?.resource || undefined;
+    return (bundle.entry.find((entry: any) => entry.fullUrl.endsWith(fullUrlReference)))?.resource || undefined;
   }
 
   public flattenBundle (completeBundle: Bundle) {

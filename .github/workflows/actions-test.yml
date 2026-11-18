@@ -1,0 +1,15 @@
+# .github/workflows/actions-test.yml
+name: Actions test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm Actions works
+        run: |
+          echo "GitHub Actions triggered successfully"
+          echo "Event: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
