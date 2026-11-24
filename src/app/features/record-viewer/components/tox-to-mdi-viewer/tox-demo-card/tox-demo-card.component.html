@@ -21,6 +21,24 @@
         />
       </div>
     </div>
+    <div class="grid-row">
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Race'"
+          [value]="demographics?.race"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Ethnicity'"
+          [value]="demographics?.ethnicity"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+    </div>
     <br />
     Residence
   </div>

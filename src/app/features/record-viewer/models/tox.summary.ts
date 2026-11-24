@@ -20,6 +20,8 @@ export class ToxSummary {
 export class ToxDemographics {
   birthDate: string;
   gender: string;
+  race: string;
+  ethnicity: string;
   address: Address;
   patientResource: {};
 }

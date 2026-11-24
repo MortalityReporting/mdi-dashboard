@@ -160,6 +160,8 @@ export class ToxToMdiMessageHandlerService {
     toxDemographics.patientResource = patientResource;
     toxDemographics.gender = patientResource?.gender || this.defaultString;
     toxDemographics.birthDate = patientResource?.birthDate || this.defaultString;
+    toxDemographics.race = this.getDecedentRaceText(patientResource?.extension);
+    toxDemographics.ethnicity = this.getDecedentEthnicityText(patientResource?.extension);
 
     toxDemographics.address = new Address(patientResource);
     toxDemographics.address.line1 = toxDemographics.address.line1 || this.defaultString;
@@ -175,6 +177,33 @@ export class ToxToMdiMessageHandlerService {
 
     return toxDemographics;
   }
+
+  private getDecedentRaceText(extensions: any): string {
+    if (!extensions) return "Unknown";
+
+    const raceExtension = this.findExtensionByUrl(
+      extensions,
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+    );
+    const textExtension = this.findExtensionByUrl(raceExtension?.extension, "text");
+    return textExtension?.valueString || "Unknown";
+  }
+
+  private getDecedentEthnicityText(extensions: any): string {
+    if (!extensions) return "Unknown";
+
+    const ethnicityExtension = this.findExtensionByUrl(
+      extensions,
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+    );
+    const textExtension = this.findExtensionByUrl(ethnicityExtension?.extension, "text");
+    return textExtension?.valueString || "Unknown";
+  }
+
+  private findExtensionByUrl(extensions: any[], url: string): any {
+    return extensions?.find((extension: any) => extension?.url === url);
+  }
+
     // TODO: Add support for non references. (Setup in FHIR UTIL based on type.)
   createPerformersList(diagnosticReport: any, messageBundle: any): Performer[] {
     let performers = [];
