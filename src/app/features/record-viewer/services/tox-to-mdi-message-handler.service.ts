@@ -158,8 +158,21 @@ export class ToxToMdiMessageHandlerService {
   createToxDemographics(patientResource: any): ToxDemographics {
     let toxDemographics = new ToxDemographics();
     toxDemographics.patientResource = patientResource;
-    toxDemographics.gender = patientResource.gender || this.defaultString;
-    toxDemographics.birthDate = patientResource.birthDate || this.defaultString;
+    toxDemographics.gender = patientResource?.gender || this.defaultString;
+    toxDemographics.birthDate = patientResource?.birthDate || this.defaultString;
+
+    toxDemographics.address = new Address(patientResource);
+    toxDemographics.address.line1 = toxDemographics.address.line1 || this.defaultString;
+    toxDemographics.address.line2 = toxDemographics.address.line2 || this.defaultString;
+    // Do not render a placeholder for a missing second line when line one exists.
+    if (toxDemographics.address.line1 !== this.defaultString && toxDemographics.address.line2 === this.defaultString) {
+      toxDemographics.address.line2 = '';
+    }
+    toxDemographics.address.city = toxDemographics.address.city || this.defaultString;
+    toxDemographics.address.state = toxDemographics.address.state || this.defaultString;
+    toxDemographics.address.zip = toxDemographics.address.zip || this.defaultString;
+    toxDemographics.address.country = toxDemographics.address.country || this.defaultString;
+
     return toxDemographics;
   }
     // TODO: Add support for non references. (Setup in FHIR UTIL based on type.)

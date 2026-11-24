@@ -1,18 +1,83 @@
 <div class="summary-section-body">
+  <div
+    class="summary-section-grid"
+    role="group"
+    [attr.aria-label]="'Demographics information'">
+    <div class="grid-row">
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Date of Birth'"
+          [value]="demographics?.birthDate"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+      <div class="grid-col-1" aria-hidden="true">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Sex'"
+          [value]="demographics?.gender"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+    </div>
+    <br />
+    Residence
+  </div>
+
+  <br />
+
   <div class="summary-section-grid">
     <div class="grid-row">
       <div class="grid-col-1">
-        <!--    TODO uncomment when we know how to use gender/sex fields per the CDC guidelines. Note that gender should come from Sex at Death-->
-<!--        <record-viewer-mdi-to-edrs-viewer-content-field [label]="'Legal Sex at Death'"-->
-<!--                                                        [value]="demographics?.gender"-->
-<!--                                                        appSetFhirExplorer-->
-<!--                                                        [resource]="demographics?.patientResource"></record-viewer-mdi-to-edrs-viewer-content-field>-->
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Address Line 1'"
+          [value]="demographics?.address?.line1"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
       </div>
       <div class="grid-col-1">
-        <record-viewer-mdi-to-edrs-viewer-content-field [label]="'Date of Birth'"
-                                                        [value]="$safeNavigationMigration(demographics?.birthDate)"
-                                                        appSetFhirExplorer
-                                                        [resource]="$safeNavigationMigration(demographics?.patientResource)"></record-viewer-mdi-to-edrs-viewer-content-field>
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Address Line 2'"
+          [value]="demographics?.address?.line2"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+    </div>
+    <div class="grid-row">
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'City'"
+          [value]="demographics?.address?.city"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'State'"
+          [value]="demographics?.address?.state"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Zip Code'"
+          [value]="demographics?.address?.zip"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
+      </div>
+      <div class="grid-col-1">
+        <record-viewer-mdi-to-edrs-viewer-content-field
+          [label]="'Country'"
+          [value]="demographics?.address?.country"
+          appSetFhirExplorer
+          [resource]="demographics?.patientResource"
+        />
       </div>
     </div>
   </div>
