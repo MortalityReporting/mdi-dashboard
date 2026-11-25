@@ -158,10 +158,52 @@ export class ToxToMdiMessageHandlerService {
   createToxDemographics(patientResource: any): ToxDemographics {
     let toxDemographics = new ToxDemographics();
     toxDemographics.patientResource = patientResource;
-    toxDemographics.gender = patientResource.gender || this.defaultString;
-    toxDemographics.birthDate = patientResource.birthDate || this.defaultString;
+    toxDemographics.gender = patientResource?.gender || this.defaultString;
+    toxDemographics.birthDate = patientResource?.birthDate || this.defaultString;
+    toxDemographics.race = this.getDecedentRaceText(patientResource?.extension);
+    toxDemographics.ethnicity = this.getDecedentEthnicityText(patientResource?.extension);
+
+    toxDemographics.address = new Address(patientResource);
+    toxDemographics.address.line1 = toxDemographics.address.line1 || this.defaultString;
+    toxDemographics.address.line2 = toxDemographics.address.line2 || this.defaultString;
+    // Do not render a placeholder for a missing second line when line one exists.
+    if (toxDemographics.address.line1 !== this.defaultString && toxDemographics.address.line2 === this.defaultString) {
+      toxDemographics.address.line2 = '';
+    }
+    toxDemographics.address.city = toxDemographics.address.city || this.defaultString;
+    toxDemographics.address.state = toxDemographics.address.state || this.defaultString;
+    toxDemographics.address.zip = toxDemographics.address.zip || this.defaultString;
+    toxDemographics.address.country = toxDemographics.address.country || this.defaultString;
+
     return toxDemographics;
   }
+
+  private getDecedentRaceText(extensions: any): string {
+    if (!extensions) return "Unknown";
+
+    const raceExtension = this.findExtensionByUrl(
+      extensions,
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"
+    );
+    const textExtension = this.findExtensionByUrl(raceExtension?.extension, "text");
+    return textExtension?.valueString || "Unknown";
+  }
+
+  private getDecedentEthnicityText(extensions: any): string {
+    if (!extensions) return "Unknown";
+
+    const ethnicityExtension = this.findExtensionByUrl(
+      extensions,
+      "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"
+    );
+    const textExtension = this.findExtensionByUrl(ethnicityExtension?.extension, "text");
+    return textExtension?.valueString || "Unknown";
+  }
+
+  private findExtensionByUrl(extensions: any[], url: string): any {
+    return extensions?.find((extension: any) => extension?.url === url);
+  }
+
     // TODO: Add support for non references. (Setup in FHIR UTIL based on type.)
   createPerformersList(diagnosticReport: any, messageBundle: any): Performer[] {
     let performers = [];

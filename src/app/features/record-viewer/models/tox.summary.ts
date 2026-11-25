@@ -1,4 +1,4 @@
-import {FhirHelperService} from "../../fhir-util/services/fhir-helper.service";
+import {Address} from "../../fhir-util";
 
 /**
  * @field mdiCaseNumber - The MDI Tracking Number linked to an MDI-to-EDRS record.
@@ -20,7 +20,10 @@ export class ToxSummary {
 export class ToxDemographics {
   birthDate: string;
   gender: string;
-  patientResource: {};h
+  race: string;
+  ethnicity: string;
+  address: Address;
+  patientResource: {};
 }
 
 export class CertifierAndOrganization {

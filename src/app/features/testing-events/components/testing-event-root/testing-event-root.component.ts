@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, computed, inject} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, signal, ChangeDetectionStrategy, inject} from '@angular/core';
 import {AuthService} from "@auth0/auth0-angular";
 import {
   combineLatest,
@@ -26,7 +26,6 @@ import { RegisteredModuleComponent } from '../registered-module/registered-modul
 import { TestContainerComponent } from '../test-container/test-container.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { AsyncPipe } from '@angular/common';
 import {ConfigService} from "../../../../config/config.service";
 
@@ -35,7 +34,7 @@ import {ConfigService} from "../../../../config/config.service";
     templateUrl: './testing-event-root.component.html',
     styleUrls: ['../testing-event.scss'],
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [MatDivider, RegisteredModuleComponent, TestContainerComponent, MatButton, MatIcon, RouterLink, MatProgressSpinner, AsyncPipe]
+    imports: [MatDivider, RegisteredModuleComponent, TestContainerComponent, MatButton, MatIcon, RouterLink, AsyncPipe]
 })
 export class TestingEventRootComponent implements OnInit, OnDestroy {
   // Registrations/QuestionnaireResponses
@@ -46,7 +45,6 @@ export class TestingEventRootComponent implements OnInit, OnDestroy {
   currentRegistration: Registration = undefined;
   currentIndex: number = -2;
   currentItem: RegistrationDisplayItem;
-  isLoading: boolean = false;
   appConfiguration: any = AppConfiguration.config;
 
   // Event Modules/Questionnaires
@@ -164,15 +162,12 @@ export class TestingEventRootComponent implements OnInit, OnDestroy {
       console.error("Update cancelled, status is equivalent.")
       return;
     }
-    this.isLoading = true;
     this.eventManager.updateTestStatus(this.currentRegistration, this.currentItem.linkId, data).subscribe({
       next: () => {
         this.refreshTrigger$.next(1);
-        this.isLoading = false;
       },
       error: err => {
         console.error(err);
-        this.isLoading = false;
         this.utilsService.showErrorMessage("Server error updating the test event status");
       }
     })

@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Inject, Input, Output, ChangeDetectionStrategy} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, Output, signal, ChangeDetectionStrategy} from '@angular/core';
+import {HttpEventType} from '@angular/common/http';
 import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {EventManagerService} from "../../services/event-manager.service";
@@ -8,7 +9,7 @@ import {RegistrationDisplayItem} from "../../models/registration-display";
 import {TestStatusCodes} from "../../models/test-status";
 import {ModuleHeaderConfig} from "../../../../providers/module-header-config";
 import {UpdateAction} from "../../models/update-action";
-import {filter} from "rxjs/operators";
+import {filter, finalize} from "rxjs/operators";
 import {UtilsService} from "../../../../service/utils.service";
 import {
   MultiFileUploadComponent
@@ -46,6 +47,7 @@ export class TestContainerComponent {
   currentRegistration: Registration;
   currentEvent: EventModule;
   @Input() registrationDisplayItem: RegistrationDisplayItem;
+  isUploading = signal(false);
 
 
   constructor(private router: Router, public dialog: MatDialog,
@@ -89,14 +91,18 @@ export class TestContainerComponent {
   }
 
   startUpload(file: File) {
-    let upload$ = this.eventManager.uploadDocument(file, this.currentEvent.machineReadableName);
-    upload$.subscribe({
+    this.isUploading.set(true);
+    const upload$ = this.eventManager.uploadDocument(file, this.currentEvent.machineReadableName);
+    upload$.pipe(
+      finalize(() => this.isUploading.set(false))
+    ).subscribe({
       next: value => {
-        this.utilsService.showSuccessMessage("The file was uploaded successfully");
-        if (value.type === 4) {
-          const attachment = `${value['body']['bucket']}/${value['body']['filename']}`
-          this.onUpdateStatus(TestStatusCodes.reviewPending, attachment)
+        if (value.type !== HttpEventType.Response) {
+          return;
         }
+        this.utilsService.showSuccessMessage("The file was uploaded successfully");
+        const attachment = `${value['body']['bucket']}/${value['body']['filename']}`
+        this.onUpdateStatus(TestStatusCodes.reviewPending, attachment)
       },
       error: err => {
         this.utilsService.showErrorMessage("An error occurred while attempting to upload the file to the server");

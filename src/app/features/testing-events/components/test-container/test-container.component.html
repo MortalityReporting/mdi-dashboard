@@ -55,7 +55,12 @@
   </div>
 } @else {
   <div class="margin-md center-contents">
-    <!-- TODO: Add error handling. -->
-    <mat-spinner></mat-spinner>
+    <p>No test selected.</p>
+  </div>
+}
+
+@if (isUploading()) {
+  <div class="spinner-container" role="status" aria-label="Uploading documentation">
+    <mat-spinner [diameter]="70"></mat-spinner>
   </div>
 }
