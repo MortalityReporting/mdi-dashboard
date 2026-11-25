@@ -1,1 +1,95 @@
-@if (auth.isAuthenticated$ | async) {  <div class="testing-event-wrapper">    @if (showRoot) {      <div class="testing-event-body padding-md">        <!-- Menu -->        <div class="testing-event-body-menu" [style.width]="registrations().length == 0  ? '10em' : ''">          <div class="menu-items">            <div class="item" (click)="selectEvent(-2)"                 [style.border-color]="currentIndex == -2 ? appConfiguration.modules['testingEvents'].color: ''">              <span class="margin-left-xs">Instructions</span>            </div>            <mat-divider></mat-divider>            @for (registration of registrations(); track registration; let index = $index) {              <div class="item"                   (click)="selectEvent(index)"                   [style.border-color]="currentIndex == index ? appConfiguration.modules['testingEvents'].color:''">                <span class="margin-left-xs">{{ getTitle(registration) }}</span>              </div>            } @empty {              <div class="register-for-event">                Not registered for any events. Click <span class="link" (click)="onRegisterForEvent()">here</span> to go                to Event Registration.              </div>            }          </div>        </div>        <!-- Content -->        <!-- If Event Registration Set -->        @if (currentRegistration) {          <testing-event-registered-module            [userId]="userFhirId"            (itemSelected)="loadTestContainer($event)"            class="testing-event-body-content">          </testing-event-registered-module>        }        <!-- If No Event Registration Set and show.home is true -->        @if (!currentRegistration) {          <div class="testing-event-body-content">            <div class="register-header" [style.border-block-color]="appConfiguration.modules['testingEvents'].color">              Instructions            </div>            <div>              <p>Raven provides a series of interactive tests for users in alignment with test cases in alignment with                MDI FHIR IG testing. Users may select individual test                cases on their own as standalone tests, or register for testing events which contain a collection of                tests being ran in that given event. For registered                events, the status is tracked for review and support by event facilitators.</p>              <p></p>            </div>          </div>        }      </div>    } @else {      <div class="testing-event-wrapper">        <div class="testing-event-body flush">          <testing-event-test-container            class="full-screen"            [userId]="userFhirId"            [registrationDisplayItem]="currentItem"            (updateStatus)="updateStatus($event)"            (exitTest)="exitTest()"          >          </testing-event-test-container>        </div>      </div>    }  </div>} @else {  <div class="testing-event-wrapper">    <div class="testing-event-body">      <div class="testing-event-body-content">        @if(configService.config()?.enableDashboardApiServices){        <button mat-raised-button                [style.background-color]="headerConfig.backgroundColor"                (click)="auth.loginWithRedirect({appState: {target: '/workflow-simulator'}})"                class="login-button"                [style.color]="'white'">          <mat-icon>login</mat-icon>          Sign In        </button>        Sign in to manage testing event modules.<br>        <br><strong>OR</strong><br><br>        }        <!-- TODO: Build this dom better, this is just a placeholder -->        <button mat-flat-button                [style.background-color]="headerConfig.backgroundColor"                [style.color]="'white'"                [routerLink]="'/workflow-simulator'">          Load Standalone Tests        </button>        View all standalone tests.      </div>    </div>  </div>}@if (isLoading) {  <div class="spinner-container">    <mat-spinner [diameter]="70"></mat-spinner>  </div>}
+@if (auth.isAuthenticated$ | async) {
+  <div class="testing-event-wrapper">
+    @if (showRoot) {
+      <div class="testing-event-body padding-md">
+        <!-- Menu -->
+        <div class="testing-event-body-menu" [style.width]="registrations().length == 0  ? '10em' : ''">
+          <div class="menu-items">
+            <div class="item" (click)="selectEvent(-2)"
+                 [style.border-color]="currentIndex == -2 ? appConfiguration.modules['testingEvents'].color: ''">
+              <span class="margin-left-xs">Instructions</span>
+            </div>
+            <mat-divider></mat-divider>
+            @for (registration of registrations(); track registration; let index = $index) {
+              <div class="item"
+                   (click)="selectEvent(index)"
+                   [style.border-color]="currentIndex == index ? appConfiguration.modules['testingEvents'].color:''">
+                <span class="margin-left-xs">{{ getTitle(registration) }}</span>
+              </div>
+            } @empty {
+              <div class="register-for-event">
+                Not registered for any events. Click <span class="link" (click)="onRegisterForEvent()">here</span> to go
+                to Event Registration.
+              </div>
+            }
+          </div>
+        </div>
+        <!-- Content -->
+        <!-- If Event Registration Set -->
+        @if (currentRegistration) {
+          <testing-event-registered-module
+            [userId]="userFhirId"
+            (itemSelected)="loadTestContainer($event)"
+            class="testing-event-body-content">
+          </testing-event-registered-module>
+        }
+        <!-- If No Event Registration Set and show.home is true -->
+        @if (!currentRegistration) {
+          <div class="testing-event-body-content">
+            <div class="register-header" [style.border-block-color]="appConfiguration.modules['testingEvents'].color">
+              Instructions
+            </div>
+            <div>
+              <p>Raven provides a series of interactive tests for users in alignment with test cases in alignment with
+                MDI FHIR IG testing. Users may select individual test
+                cases on their own as standalone tests, or register for testing events which contain a collection of
+                tests being ran in that given event. For registered
+                events, the status is tracked for review and support by event facilitators.</p>
+              <p></p>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="testing-event-wrapper">
+        <div class="testing-event-body flush">
+          <testing-event-test-container
+            class="full-screen"
+            [userId]="userFhirId"
+            [registrationDisplayItem]="currentItem"
+            (updateStatus)="updateStatus($event)"
+            (exitTest)="exitTest()"
+          >
+          </testing-event-test-container>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="testing-event-wrapper">
+    <div class="testing-event-body">
+      <div class="testing-event-body-content">
+        @if(configService.config()?.enableDashboardApiServices){
+        <button mat-raised-button
+                [style.background-color]="headerConfig.backgroundColor"
+                (click)="auth.loginWithRedirect({appState: {target: '/workflow-simulator'}})"
+                class="login-button"
+                [style.color]="'white'">
+          <mat-icon>login</mat-icon>
+          Sign In
+        </button>
+        Sign in to manage testing event modules.<br>
+        <br><strong>OR</strong><br><br>
+        }
+        <!-- TODO: Build this dom better, this is just a placeholder -->
+        <button mat-flat-button
+                [style.background-color]="headerConfig.backgroundColor"
+                [style.color]="'white'"
+                [routerLink]="'/workflow-simulator'">
+          Load Standalone Tests
+        </button>
+        View all standalone tests.
+      </div>
+    </div>
+  </div>
+}
